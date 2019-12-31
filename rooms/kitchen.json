@@ -1,0 +1,17 @@
+{
+    "Kitchen": {
+        "description": "An old kitchen.\nReally just a camp fire.",
+        "people": {
+        },
+        "new_rooms": {
+            "Hallway": {
+                "exists":"begin"
+            }
+        },
+        "things": {
+            "chest": {
+                "exists": "begin"
+            }
+        }
+    }
+}

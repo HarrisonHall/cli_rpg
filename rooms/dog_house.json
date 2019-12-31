@@ -1,0 +1,30 @@
+{
+    "Dog House": {
+        "description": "A small dog house.\nWhy did you go inside?",
+        "people": {
+            "John Rolloway": {
+                "dialogue": "start",
+                "exists": "begin"
+            }
+        },
+        "new_rooms": {
+            "Dungeon 1" : {
+                "exists": "begin"
+            },
+            "Hallway": {
+                "exists":"begin"
+            }
+        },
+        "things": {
+            "chest": {
+                "exists": "begin"
+            },
+            "dog": {
+                "exists": "end"
+            },
+            "Cat": {
+                "exists": "begin"
+            }
+        }
+    }
+}

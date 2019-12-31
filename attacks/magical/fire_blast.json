@@ -1,0 +1,11 @@
+{
+    "Fire Blast": {
+        "magic" : 2,
+        "type": "Magical",
+        "damage" : 2,
+        "level_multiplier" : 0.1,
+        "effects" : {
+            "burn" : 0.2
+        }
+    }
+}

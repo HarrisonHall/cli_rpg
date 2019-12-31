@@ -1,0 +1,23 @@
+{
+    "Penelope Sinep" : {
+        "dialogue": {
+            "start": {
+                "3": "4"
+            }
+        },
+        "magic": 50,
+        "hp": 10,
+        "armor": 0,
+        "flags": {
+            "will_sell": true,
+            "love": true
+        },
+        "custom": {
+            "lick": {
+                "event": ""
+            }
+        },
+        "description": "A manly gal.\nSmells like duckgrapes."
+        
+    }
+}

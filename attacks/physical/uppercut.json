@@ -1,0 +1,8 @@
+{
+    "Uppercut": {
+        "magic" : 0,
+        "type": "Physical",
+        "damage" : 2,
+        "level_multiplier" : 0.25
+    }
+}

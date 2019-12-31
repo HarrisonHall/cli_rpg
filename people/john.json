@@ -1,0 +1,41 @@
+{
+    "John Rolloway" : {
+        "description": "Probably a cool dude.",
+        "dialogue": {
+            "cool": {
+                "say": "yeah you picked the cool choice.",
+                "flags": {
+                    "end": null
+                }
+            },
+            "bad choice": {
+                "say": "okay then, bad choice.",
+                "event": "bad choice",
+                "flags": {
+                    "end": null
+                }
+            },
+            "start": {
+                "say": "Hello",
+                "next": "start2"
+            },
+            "start2": {
+                "say": "I'm John, you must be Bardwin",
+                "choices": {
+                    "Yes, that is I." : "cool choice",
+                    "No, I'm dumbo the elephant." : "bad choice"
+                }
+            },
+            "cool choice": {
+                "say": "I knew it.",
+                "event": "cool",
+                "flags": {
+                    "end": null
+                }
+            }
+        },
+        "attacks": {
+            "Swing": 1
+        }
+    }
+}

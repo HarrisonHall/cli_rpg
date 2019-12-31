@@ -1,0 +1,37 @@
+{
+    "Hallway": {
+        "description": "A dusty hallway.",
+        "people": {
+            "John Rolloway": {
+                "dialogue": "start",
+                "exists": "begin"
+            },
+            "Penelope Sinep" : {
+                "dialogue": "start",
+                "exists": "begin"
+            }
+        },
+        "new_rooms": {
+            "Dungeon 1" : {
+                "exists": "begin"
+            },
+            "Dog House" : {
+                "exists": "end"
+            },
+            "Kitchen": {
+                "exists":"begin"
+            }
+        },
+        "things": {
+            "chest": {
+                "exists": "begin"
+            },
+            "dog": {
+                "exists": "end"
+            },
+            "Cat": {
+                "exists": "begin"
+            }
+        }
+    }
+}
