@@ -1,4 +1,4 @@
-import Exist
+from modules import Exist
 
 class Thing(Exist.Exist):
     def class_specific(self, pdict):

@@ -1,4 +1,4 @@
-import Exist
+from modules import Exist
 from random import choices
 
 class Person(Exist.Exist):
@@ -67,7 +67,7 @@ class Person(Exist.Exist):
             list(self.usable_attacks.keys()),
             list(self.usable_atttacks.values())
         )[0]
-        self.attacks[]
+        return attack
 
     def do_damage(self, damage, now_in_battle=True):
         self.hp -= damage

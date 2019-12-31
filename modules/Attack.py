@@ -1,5 +1,5 @@
 from random import uniform, choices
-import Exist
+from modules import Exist
 
 class Attack(Exist.Exist):
     def class_specific(self, pdict):

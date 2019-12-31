@@ -1,10 +1,6 @@
 from json import load
-import Exist
-import Player
-import Person
-import Thing
-import Room
-import Attack
+from modules import Exist, Player, Person
+from modules import Thing, Room, Attack
 from os import listdir
 from sys import argv, exit
 from os.path import isdir
@@ -122,10 +118,10 @@ rooms = {}
 people = {}
 things = {}
 attacks = {}
-objs_from_dirs(Person.Person, people, "people")
-objs_from_dirs(Room.Room, rooms, "rooms")
-objs_from_dirs(Thing.Thing, things, "things")
-objs_from_dirs(Attack.Attack, attacks, "attacks")
+objs_from_dirs(Person.Person, people, "base/people")
+objs_from_dirs(Room.Room, rooms, "base/rooms")
+objs_from_dirs(Thing.Thing, things, "base/things")
+objs_from_dirs(Attack.Attack, attacks, "base/attacks")
 Exist.Exist.update_all_dicts(
     all_attacks=attacks, all_people=people,
     all_things=things, all_rooms=rooms
