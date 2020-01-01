@@ -61,7 +61,11 @@ class Player(Exist.Exist):
 
     def do_about(self):
         d = self.interact()
-        d["message"] = (
+        d["message"] = self.status_message()
+        return d
+
+    def status_message(self):
+        return (
             f"Name: {self.name}\n"
             f"Current Event: {self.current_event}\n"
             f"HP: {self.hp}/{self.max_hp}\n"
@@ -70,7 +74,6 @@ class Player(Exist.Exist):
             f"LVL: {self.level}\n"
             f"RACE: {self.race}"
         )
-        return d
 
 
     def get_attacks(self, person, room):

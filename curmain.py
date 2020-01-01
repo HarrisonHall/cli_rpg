@@ -6,12 +6,80 @@ from sys import argv, exit
 from os.path import isdir
 import curses
 
-def interact(some_dict, room, wins):
+import logging
+logging.basicConfig(filename='logs/test.log',level=logging.DEBUG)
+
+global text_buf
+global choice_buf
+
+class window:
+    def __init__(self, h, w, y, x):
+        self.h = h
+        self.w = w
+        self.y = y
+        self.x = x
+        self.win = curses.newwin(h,w,y,x)
+        self.buf = []
+
+    def print_list(self):
+        start = 1
+        self.win.clear()
+        for line in self.buf:
+            logging.debug(f"{start} {self.x} {line} {self.w}")
+            self.win.addnstr(start, 1, line, self.w-2)
+            start += 1
+        self.win.border()
+        self.win.refresh()
+
+    def add_to_buf(self, text, clear=False):
+        if clear:
+            self.buf = []
+        l = text.split("\n")
+        for line in l:
+            self.buf.append(line)
+            if len(self.buf) > self.h:
+                self.buf = self.buf[1:]
+
+    def add_choices_to_buf(self, choice_list, clear=True):
+        if clear:
+            self.buf = []
+        i = 0
+        while i < len(choice_list):
+            total = ""
+            to_add = choice_list[i]
+            i += 1
+            if i in range(len(choice_list)):
+                logging.debug("True")
+                to_add2 = choice_list[i]
+                i += 1
+                if len(to_add) > self.w // 2:
+                    if len(to_add2) > self.w // 2:
+                        total = to_add[:self.w] + to_add2[:self.w]
+                    total = to_add[:self.w] + to_add2
+                spaceing = " "*(self.w//2 - len(to_add))
+                total = to_add + spaceing + to_add2
+            else:
+                total = to_add
+            self.add_to_buf(total)
+
+def do_exit(stdscr):
+    curses.nocbreak()
+    stdscr.keypad(False)
+    curses.echo()
+    curses.endwin()
+    exit()
+
+
+def interact(some_dict, room, wins, stdscr):
     def is_valid(character):
         if character.isdigit():
             if int(character) in range(len(some_dict.keys())):
                 return True
         return False
+
+    def refresh_wins(ws):
+        for win in wins:
+            win.print_list()
     
     if not isinstance(some_dict, dict):
         if isinstance(some_dict, str):
@@ -20,23 +88,29 @@ def interact(some_dict, room, wins):
         if some_dict is None:
             return None
         else:
-            print(some_dict)
+            #print(some_dict)
             return None
 
+    refresh_wins(wins)
+    text_win = wins[0]
+    choice_win = wins[1]
+    char_win = wins[2]
+
     if "message" in some_dict:
-        print(some_dict["message"])
+        text_win.add_to_buf(some_dict["message"])
         some_dict.pop("message")
+    char_win.add_to_buf(player.status_message(), clear=True)
 
     if some_dict == {}:
         return None
     
     c = ""
     l = list(some_dict.keys())
-    print()
+    text_win.add_to_buf("")
     while not is_valid(c):
-        for i, l1 in enumerate(l):
-            print(f"{i}) {l1}")
-        c = input(">> ")
+        choice_win.add_choices_to_buf([f"{i}) {l1}" for i, l1 in enumerate(l)])
+        refresh_wins(wins)
+        c = chr(choice_win.win.getch())
         if "q" in c:
             curses.nocbreak()
             stdscr.keypad(False)
@@ -44,13 +118,13 @@ def interact(some_dict, room, wins):
             curses.endwin()
             exit()
         if not is_valid(c):
-            print("Not valid.")
+            text_win.add_to_buf("Not valid.")
     choice = some_dict[l[int(c)]]
     if choice["fun"] is not None:
-        interact(choice["fun"](*choice["vals"]), room)
+        interact(choice["fun"](*choice["vals"]), room, wins, stdscr)
     return None
 
-def get_current_stuff(room, player):
+def get_current_stuff(room, player, stdscr):
     current = {}
     for person in room.new_people:
         r = room.new_people[person]
@@ -92,13 +166,13 @@ def get_current_stuff(room, player):
         "vals": [],
     }
     current["exit"] = {
-        "fun": exit,
-        "vals": []
+        "fun": do_exit,
+        "vals": [stdscr]
     }
     return current
 
 def goto_room(new_room, player):
-    print(f"ENTER: {new_room}")
+    #print(f"ENTER: {new_room}")
     player.room = rooms[new_room]
 
 current_place = "Hallway"
@@ -143,13 +217,17 @@ if __name__ == "__main__":
     curses.cbreak()
     stdscr.keypad(True)
 
+    h1 = int(curses.LINES*3/4)
+    w1 = int(curses.COLS*3/4)
+    h2 = h1
+    w2 = curses.COLS - w1
+    h3 = curses.LINES - h1
+    w3 = curses.COLS
     
-    text_win = curses.newwin(curses.COLS*3/4,curses.ROWS*3/4,0,0)
-    choice_win = curses.newwin(curses.COLS/4,curses.ROWS,curses.COLS*3/4,0)
-    char_win = curses.newwin(curses.COLS*3/4,curses.ROWS/4,0,curses.ROWS*3/4)
-
-    
-
+    text_win = window(h1,w1, 0, 0)
+    char_win = window(h2, w2, 0, w1)
+    choice_win = window(h3, w3, h1, 0)
+    text_win.add_to_buf("CURSES RPG DEMO\nBY HARRISON HALL")
 
     for w in argv:
         if w in ["v"]:
@@ -161,5 +239,5 @@ if __name__ == "__main__":
 
     goto_room(current_place, player)
     while True:
-        options = get_current_stuff(player.room, player)
-        interact(options, player.room, [text_win, choice_win, char_win])
+        options = get_current_stuff(player.room, player, stdscr)
+        interact(options, player.room, [text_win, choice_win, char_win], stdscr)

@@ -2,7 +2,7 @@
     "Penelope Sinep" : {
         "dialogue": {
             "start": {
-                "3": "4"
+                "say": "I don't really have much to say,\nI'm pretty stupid."
             }
         },
         "magic": 50,
