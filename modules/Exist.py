@@ -69,24 +69,38 @@ class Exist:
             if k in player.events:
                 return k
 
-    def do_dialogue(self, key, player, room):
+    def do_dialogue(self, key, player, room, message=None):
         if self.is_dead():
             return {
                 "message": f"{self.name} is dead."
             }
         if key not in self.dialogue:
-            print("INVALID KEY")
-            return self.interact(player, room)
+            l = self.interact(player, room)
+            l["message"] = "INVALID KEY"
+            return l
         d = self.dialogue[key]
-        print(f"{self.name}: {d['say']}")
+        if message == None:
+            update = {
+                "message": f"{self.name}: {d['say']}"
+            }
+        else:
+            update = {
+                "message": f"{message}\n{self.name}: {d['say']}"
+            }
         if "event" in d:
             player.events[d["event"]] = None
             player.current_event = d["event"]
         if "flags" in d:
             if "end" in d["flags"]:
-                return self.interact(player, room)
+                r = self.interact(player, room)
+                r.update(update)
+                return r
         if "next" in d:
-            return self.do_dialogue(d["next"], player, room)
+            r = self.do_dialogue(
+                d["next"], player,
+                room, message=update["message"]
+            )
+            return r
         if "choices" in d:
             r = {}
             for choice in d["choices"]:
@@ -94,8 +108,11 @@ class Exist:
                     "fun": self.do_dialogue,
                     "vals": [d["choices"][choice], player, room]
                 }
+            r.update(update)
             return r
-        return self.interact(player, room)
+        r = self.interact(player, room)
+        r.update(update)
+        return r
 
     def is_dead(self):
         return False
@@ -104,5 +121,6 @@ class Exist:
         return True
 
     def do_description(self, player, room):
-        print(self.description)
-        return self.interact(player, room)
+        d = self.interact(player, room)
+        d["message"] = self.description
+        return d

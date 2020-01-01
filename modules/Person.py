@@ -8,6 +8,8 @@ class Person(Exist.Exist):
         self.magic = pdict.get("magic", 1)  # magic
         self.armor = pdict.get("armor", 1)
 
+        self.level = pdict.get("level", 2)
+
         self.in_battle = pdict.get("in_battle", False)
 
         self.race = pdict.get("race", "human")
@@ -32,10 +34,14 @@ class Person(Exist.Exist):
         if not self.in_battle:
             key = self.get_key(player, room)
             return {
-            "Dialogue": {
-                "fun": self.do_dialogue,
-                "vals": [key, player, room]
-            },
+                "About": {
+                    "fun": self.do_about,
+                    "vals": [player, room],
+                },
+                "Dialogue": {
+                    "fun": self.do_dialogue,
+                    "vals": [key, player, room]
+                },
                 "Description": {
                     "fun": self.do_description,
                     "vals": [player, room]
@@ -52,22 +58,34 @@ class Person(Exist.Exist):
         else: # battle
             return self.do_attack(player, room)
 
+    def do_about(self, player, room):
+        d = self.interact(player, room)
+        d["message"] = (
+            f"NAME: {self.name}\n"
+            f"RACE: {self.race}\n"
+            f"ARM: {self.armor}\n"
+            f"DESC: {self.description}"
+        )
+        return d
+
     def do_attack(self, player, room):
         if self.is_alive():
             return player.get_attacks(self, room)
         else:
             return {}
 
-    def attack_back(self, player):
+    def attack_back(self, player, room):
         if self.is_dead():
             return ""
         if self.usable_attacks == {}:
             return f"{self.name} can't attack back."
         attack = choices(
             list(self.usable_attacks.keys()),
-            list(self.usable_atttacks.values())
+            list(self.usable_attacks.values())
         )[0]
-        return attack
+        mess = f"{self.name} uses {attack}\n"
+        mess += self.attacks[attack].damage_and_effects_back(self, player, room)
+        return mess
 
     def do_damage(self, damage, now_in_battle=True):
         self.hp -= damage

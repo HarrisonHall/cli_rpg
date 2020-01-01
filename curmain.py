@@ -4,8 +4,9 @@ from modules import Thing, Room, Attack
 from os import listdir
 from sys import argv, exit
 from os.path import isdir
+import curses
 
-def interact(some_dict, room):
+def interact(some_dict, room, wins):
     def is_valid(character):
         if character.isdigit():
             if int(character) in range(len(some_dict.keys())):
@@ -36,6 +37,12 @@ def interact(some_dict, room):
         for i, l1 in enumerate(l):
             print(f"{i}) {l1}")
         c = input(">> ")
+        if "q" in c:
+            curses.nocbreak()
+            stdscr.keypad(False)
+            curses.echo()
+            curses.endwin()
+            exit()
         if not is_valid(c):
             print("Not valid.")
     choice = some_dict[l[int(c)]]
@@ -131,14 +138,28 @@ print("DONE LOADING\n---")
 
 
 if __name__ == "__main__":
+    stdscr = curses.initscr()
+    curses.noecho()
+    curses.cbreak()
+    stdscr.keypad(True)
+
+    
+    text_win = curses.newwin(curses.COLS*3/4,curses.ROWS*3/4,0,0)
+    choice_win = curses.newwin(curses.COLS/4,curses.ROWS,curses.COLS*3/4,0)
+    char_win = curses.newwin(curses.COLS*3/4,curses.ROWS/4,0,curses.ROWS*3/4)
+
+    
+
+
     for w in argv:
         if w in ["v"]:
             print(f"Spells: {player.spells}")
             print(f"People: {people}")
             print(f"Places: {rooms}")
             exit()
+    
 
     goto_room(current_place, player)
     while True:
         options = get_current_stuff(player.room, player)
-        interact(options, player.room)
+        interact(options, player.room, [text_win, choice_win, char_win])

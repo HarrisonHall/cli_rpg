@@ -26,7 +26,7 @@ class Attack(Exist.Exist):
                 caster.effects[e] += 1
             else:
                 caster.effects[e] = 1
-        message2 = enemy.attack_back(caster)
+        message2 = enemy.attack_back(caster, room)
         back = enemy.interact(caster, room)
         back["message"] = message1 + "\n" + message2
         return back
@@ -39,6 +39,14 @@ class Attack(Exist.Exist):
         )
         message1 = enemy.do_damage(total_damage)
         caster.magic -= self.magic
+
+        for e in self.calculate_special_effects(caster, enemy):
+            if e in caster.effects:
+                caster.effects[e] += 1
+            else:
+                caster.effects[e] = 1
+        return message1
+
 
     def calculate_special_effects(self, caster, enemy):
         e = []
@@ -58,4 +66,4 @@ class Attack(Exist.Exist):
         return False
 
     def __repr__(self):
-        return f"{self.atype} - {self.name}"
+        return f"{self.atype} || {self.name}"

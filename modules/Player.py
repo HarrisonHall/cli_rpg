@@ -2,11 +2,15 @@ from modules import Exist
 
 class Player(Exist.Exist):
     def class_specific(self, pdict):
-        self.name = "Bardwin"
+        self.name = "Äaä Berd"
         self.hp = 10
         self.max_hp = 10
         self.magic = 10
         self.armor = 2
+
+        self.room = None
+
+        self.race = "Lentarde"
 
         self.level = 1
 
@@ -56,15 +60,17 @@ class Player(Exist.Exist):
         return d
 
     def do_about(self):
-        print(
+        d = self.interact()
+        d["message"] = (
             f"Name: {self.name}\n"
             f"Current Event: {self.current_event}\n"
             f"HP: {self.hp}/{self.max_hp}\n"
             f"MAG: {self.magic}\n"
             f"ARM: {self.armor}\n"
-            f"LVL: {self.level}"
+            f"LVL: {self.level}\n"
+            f"RACE: {self.race}"
         )
-        return self.interact()
+        return d
 
 
     def get_attacks(self, person, room):
@@ -83,3 +89,14 @@ class Player(Exist.Exist):
 
     def __repr__(self):
         return f"{self.name} HP:{self.hp}/{self.max_hp}"
+
+    def do_damage(self, damage):
+        self.hp -= damage
+        if self.hp <= 0:
+            self.hp = 0
+        else:
+            mess = (
+                self.name + " has taken " +
+                "{:.2f}".format(damage) + " damage."
+            )
+            return mess
