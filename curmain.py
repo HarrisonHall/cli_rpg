@@ -1,6 +1,7 @@
 from json import load
 from modules import Exist, Player, Person
 from modules import Thing, Room, Attack
+from modules import Item
 from os import listdir
 from sys import argv, exit
 from os.path import isdir
@@ -101,6 +102,9 @@ def interact(some_dict, room, wins, stdscr):
         some_dict.pop("message")
     char_win.add_to_buf(player.status_message(), clear=True)
 
+    if "quit" in some_dict:
+        do_exit(stdscr)
+        
     if some_dict == {}:
         return None
     
@@ -199,13 +203,16 @@ rooms = {}
 people = {}
 things = {}
 attacks = {}
+items = {}
 objs_from_dirs(Person.Person, people, "base/people")
 objs_from_dirs(Room.Room, rooms, "base/rooms")
 objs_from_dirs(Thing.Thing, things, "base/things")
 objs_from_dirs(Attack.Attack, attacks, "base/attacks")
+objs_from_dirs(Item.Item, items, "base/items")
 Exist.Exist.update_all_dicts(
     all_attacks=attacks, all_people=people,
-    all_things=things, all_rooms=rooms
+    all_things=things, all_rooms=rooms,
+    all_items=items
 )
 print("DONE LOADING\n---")
 

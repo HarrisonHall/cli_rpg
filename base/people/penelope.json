@@ -1,8 +1,34 @@
 {
     "Penelope Sinep" : {
         "dialogue": {
+            "given key": {
+                "say": "I hope you liked the key",
+                "flags": {
+                    "end": null
+                }
+            },
             "start": {
-                "say": "I don't really have much to say,\nI'm pretty stupid."
+                "say": "Do you need anything?",
+                "choices": {
+                    "Yes.": "for_key",
+                    "No.": "no_key"
+                }
+            },
+            "no_key": {
+                "say": "That's too bad, sugar.",
+                "flags": {
+                    "end": null
+                }
+            },
+            "for_key":{
+                "say": "Here's the key.",
+                "event": "given key",
+                "flags": {
+                    "end": null,
+                    "give": {
+                        "Penelope's Key": 1
+                    }
+                }
             }
         },
         "magic": 50,
@@ -17,7 +43,13 @@
                 "event": ""
             }
         },
-        "description": "A manly gal.\nSmells like duckgrapes."
+        "description": "A manly gal.\nSmells like duckgrapes.",
+        "inventory": {
+            "Penelope's Key": {
+                "count": 1,
+                "exists": "start"
+            }
+        }
         
     }
 }

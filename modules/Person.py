@@ -31,7 +31,28 @@ class Person(Exist.Exist):
         return (self.hp <= 0)
 
     def interact(self, player, room):
-        if not self.in_battle:
+        if self.is_dead():
+            key = self.get_key(player, room)
+            return {
+                "About": {
+                    "fun": self.do_about,
+                    "vals": [player, room],
+                },
+                "Description": {
+                    "fun": self.do_description,
+                    "vals": [player, room]
+                },
+                "Inventory": {
+                    "fun": self.do_inventory,
+                    "vals": [player, room]
+                },
+                "Back": {
+                    "fun": None,
+                    "vals": []
+                }
+
+            }
+        elif not self.in_battle:
             key = self.get_key(player, room)
             return {
                 "About": {
@@ -98,12 +119,28 @@ class Person(Exist.Exist):
                 self.name + " has taken " +
                 "{:.2f}".format(damage) + " damage."
             )
-            if now_in_battle:
+            if now_in_battle and not self.in_battle:
                 self.in_battle = True
                 mess += f"\n{self.name} is now in battle."
             return mess
 
-    def __repr__(self):
-        if self.is_dead():
-            return f"XDEADX {self.name}"
-        return f"{self.name} ___DEBUG___ HP {self.hp}"
+    def do_inventory(self, player, room):
+        d = {}
+        for item in self.inventory:
+            key = self.inventory[item].get("exists", "start")
+            if self.thing_exists_yet(player, key):
+                item_rep = f"{item} ({self.inventory[item].get('count',1)})"
+                d[item_rep] = {
+                    "fun": self.give_item,
+                    "vals": [player, room, item, 1]
+                }
+        if len(self.inventory) > 1:
+            d["Take all"] = {
+                "fun": self.give_item,
+                "vals": [player, room, "all", -1]
+            }
+        d["Back"] = {
+            "fun": self.interact,
+            "vals": [player, room]
+        }
+        return d

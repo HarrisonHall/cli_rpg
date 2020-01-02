@@ -2,7 +2,7 @@
     "Dog House": {
         "description": "A small dog house.\nWhy did you go inside?",
         "people": {
-            "John Rolloway": {
+            "Prince Fluff": {
                 "dialogue": "start",
                 "exists": "begin"
             }
@@ -16,15 +16,6 @@
             }
         },
         "things": {
-            "chest": {
-                "exists": "begin"
-            },
-            "dog": {
-                "exists": "end"
-            },
-            "Cat": {
-                "exists": "begin"
-            }
         }
     }
 }

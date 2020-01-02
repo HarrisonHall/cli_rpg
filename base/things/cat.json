@@ -8,6 +8,20 @@
                     "end": null
                 }
             }
+        },
+        "inventory": {
+            "Potion": {
+                "exists": "start",
+                "count": 3
+            },
+            "Elixir": {
+                "exists": "start",
+                "count": 1
+            },
+            "Stone": {
+                "exists": "stone active",
+                "count": 1
+            }
         }
     }
 }

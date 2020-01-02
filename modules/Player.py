@@ -14,8 +14,10 @@ class Player(Exist.Exist):
 
         self.level = 1
 
-        self.items = {
-            "potion",
+        self.inventory = {
+            "Potion": {
+                "count": 1
+            }
         }
         self.usable_attacks = {
             "Uppercut",
@@ -36,8 +38,12 @@ class Player(Exist.Exist):
                 "fun": self.do_about,
                 "vals": [],
             },
-            "Items": {
-                "fun": self.do_items,
+            "Inventory": {
+                "fun": self.do_inventory,
+                "vals": []
+            },
+            "Flags": {
+                "fun": self.do_flags,
                 "vals": []
             },
             "Back": {
@@ -46,13 +52,19 @@ class Player(Exist.Exist):
             }
         }
 
-    def do_items(self):
+    def do_inventory(self):
         d = {}
-        for item in self.items:
-            d[item] = {
-                "fun": None,
-                "vals": []
-            }
+        for item in self.inventory:
+            if item in self.items:
+                d[item] = {
+                    "fun": self.items[item].interact,
+                    "vals": [self]
+                }
+            else:
+                d[item] = {
+                    "fun": None,
+                    "vals": []
+                }
         d["Back"] = {
             "fun": self.interact,
             "vals": []
@@ -103,3 +115,23 @@ class Player(Exist.Exist):
                 "{:.2f}".format(damage) + " damage."
             )
             return mess
+
+    def add_item(self, item, count):
+        if item in self.items:
+            for event in self.items[item].events:
+                self.events[event] = self.items[item].events[event]
+        if item in self.inventory:
+            self.inventory[item]["count"] = (
+                self.inventory[item].get("count", 1) + count
+            )
+        else:
+            self.inventory[item] = {
+                "count": count,
+            }
+        return None
+
+    def do_flags(self):
+        message = ""
+        for flag in self.events:
+            message += f"{flag}\n"
+        return message

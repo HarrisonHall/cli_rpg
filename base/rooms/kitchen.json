@@ -9,7 +9,13 @@
             }
         },
         "things": {
-            "chest": {
+            "Chest": {
+                "exists": "begin"
+            },
+            "Cool Lamp": {
+                "exists": "begin"
+            },
+            "Big Chest": {
                 "exists": "begin"
             }
         }

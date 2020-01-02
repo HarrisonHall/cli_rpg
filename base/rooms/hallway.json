@@ -15,9 +15,6 @@
             "Dungeon 1" : {
                 "exists": "begin"
             },
-            "Dog House" : {
-                "exists": "end"
-            },
             "Kitchen": {
                 "exists":"begin"
             }

@@ -36,6 +36,12 @@
         },
         "attacks": {
             "Swing": 1
+        },
+        "inventory": {
+            "Photograph": {
+                "count": 1,
+                "exists": "start"
+            }
         }
     }
 }

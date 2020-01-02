@@ -9,7 +9,7 @@
         },
         "new_rooms": {
             "Dog House" : {
-                "exists":"end"
+                "exists":"given key"
             },
             "Hallway": {
                 "exists":"begin"
@@ -23,6 +23,9 @@
                 "exists": "end"
             },
             "Cat": {
+                "exists": "begin"
+            },
+            "Big Chest": {
                 "exists": "begin"
             }
         }

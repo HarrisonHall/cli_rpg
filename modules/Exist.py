@@ -3,6 +3,7 @@ class Exist:
     people = {}
     rooms = {}
     things = {}
+    items = {}
     
     def __init__(self, pdict={}):
         if pdict == {}:
@@ -12,7 +13,7 @@ class Exist:
                 self.name = key
             pdict = pdict[self.name]
         
-        self.items = pdict.get("items", {})
+        self.inventory = pdict.get("inventory", {})
 
         # mood, selling, other stuff
         self.flags = pdict.get("flags", {})
@@ -24,11 +25,6 @@ class Exist:
 
         self.story_points = pdict.get("story_point", {"start": None})
 
-        self.all_attacks = {}
-        self.all_people = {}
-        self.all_rooms = {}
-        self.all_things = {}
-
         self.class_specific(pdict)
 
     def class_specific(self, pdict):
@@ -38,12 +34,14 @@ class Exist:
     def update_all_dicts(
             cls,
             all_attacks={}, all_people={},
-            all_rooms = {}, all_things = {}
+            all_rooms = {}, all_things = {},
+            all_items={}
     ):
         cls.attacks.update(all_attacks)
         cls.rooms.update(all_rooms)
         cls.things.update(all_things)
         cls.people.update(all_people)
+        cls.items.update(all_items)
         return None
 
     def exists_yet(self, player):
@@ -51,6 +49,13 @@ class Exist:
             for point in self.story_points:
                 if event == point:
                     return True
+        return False
+
+    def thing_exists_yet(self, player, key):
+        for event in player.events:
+            if event == key:
+                print(event, key)
+                return True
         return False
 
     def is_alive(self):
@@ -90,7 +95,13 @@ class Exist:
         if "event" in d:
             player.events[d["event"]] = None
             player.current_event = d["event"]
+        if "events" in d:
+            for event in d["events"]:
+                player.events[event] = d["events"][event]
         if "flags" in d:
+            if "give" in d["flags"]:
+                for item in d["flags"]["give"]:
+                    self.give_item(player, room, item, d["flags"]["give"][item])
             if "end" in d["flags"]:
                 r = self.interact(player, room)
                 r.update(update)
@@ -124,3 +135,22 @@ class Exist:
         d = self.interact(player, room)
         d["message"] = self.description
         return d
+
+    def give_item(self, player, room, item, count):
+        if item == "all":
+            tot = {}
+            tot.update(self.inventory)
+            for item in self.inventory:
+                key = self.inventory[item].get("exists", "start")
+                if self.thing_exists_yet(player, key):
+                    player.add_item(item, self.inventory[item].get("count", 1))
+                    tot.pop(item)
+            self.inventory = tot
+        else:
+            player.add_item(item, count)
+            self.inventory[item]["count"] = self.inventory[item].get("count", 1) - count
+            if self.inventory[item]["count"] <= 0:
+                self.inventory.pop(item)
+        r = self.do_inventory(player, room)
+        r["message"] = "Item(s) added."
+        return r

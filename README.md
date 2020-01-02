@@ -1,11 +1,13 @@
 # CLI RPG DEMO
 
 ## TODO
-* [ ] Person Attack Back
-* [ ] Changing Rooms
-* [ ] Items
+* [x] Person Attack Back
+* [x] Changing Rooms
+* [x] Items
+* [ ] Weapons
 * [ ] Custscene dialogue support
 * [ ] Mood flags
 * [ ] Time of day
-* [ ] Player skill tree
+* [ ] Party
+* [ ] Person  skill tree
 * [ ] Story
