@@ -28,6 +28,7 @@ class Exist:
         self.class_specific(pdict)
 
     def class_specific(self, pdict):
+        """Reserved for everything that inherits from Exist."""
         return None
 
     @classmethod
@@ -37,6 +38,10 @@ class Exist:
             all_rooms = {}, all_things = {},
             all_items={}
     ):
+        """Update dictionaries of all objects.
+        
+        All objects that inhert from Exist have the same mappings.
+        """
         cls.attacks.update(all_attacks)
         cls.rooms.update(all_rooms)
         cls.things.update(all_things)
@@ -45,6 +50,7 @@ class Exist:
         return None
 
     def exists_yet(self, player):
+        """Returns True if player contains event in story_point."""
         for event in player.events:
             for point in self.story_points:
                 if event == point:
@@ -52,22 +58,26 @@ class Exist:
         return False
 
     def thing_exists_yet(self, player, key):
+        """Returns True if specific thing shares event with key."""
         for event in player.events:
             if event == key:
                 print(event, key)
                 return True
         return False
 
-    def is_alive(self):
-        return True
-
     def __repr__(self):
         return self.name
 
     def interact(self, player, room):
+        """Base interaction does nothing."""
         return None
 
     def get_key(self, player, room):
+        """
+        Finds most likely key between player and object.
+        
+        TODO: special circumstances for room.
+        """
         if player.current_event in self.dialogue:
             return player.current_event
         for k in self.dialogue:
@@ -75,6 +85,9 @@ class Exist:
                 return k
 
     def do_dialogue(self, key, player, room, message=None):
+        """
+        Dialogue handling.
+        """
         if self.is_dead():
             return {
                 "message": f"{self.name} is dead."
@@ -126,17 +139,21 @@ class Exist:
         return r
 
     def is_dead(self):
+        """The basis for existance is not death."""
         return False
 
     def is_alive(self):
+        """The essence of existance is life."""
         return True
 
     def do_description(self, player, room):
+        """Add message of description to interaction."""
         d = self.interact(player, room)
         d["message"] = self.description
         return d
 
     def give_item(self, player, room, item, count):
+        """Give item to a player."""
         if item == "all":
             tot = {}
             tot.update(self.inventory)

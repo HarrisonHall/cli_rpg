@@ -44,22 +44,3 @@ class Thing(Exist.Exist):
             "vals": [player, room]
         }
         return d
-
-    def give_item(self, player, room, item, count):
-        if item == "all":
-            tot = {}
-            tot.update(self.inventory)
-            for item in self.inventory:
-                key = self.inventory[item].get("exists", "start")
-                if self.thing_exists_yet(player, key):
-                    player.add_item(item, self.inventory[item].get("count", 1))
-                    tot.pop(item)
-            self.inventory = tot
-        else:
-            player.add_item(item, count)
-            self.inventory[item]["count"] = self.inventory[item].get("count", 1) - count
-            if self.inventory[item]["count"] <= 0:
-                self.inventory.pop(item)
-        r = self.do_inventory(player, room)
-        r["message"] = "Item(s) added."
-        return r

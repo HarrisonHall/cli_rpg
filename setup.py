@@ -1,7 +1,5 @@
 import sys
 
-
-
 from cx_Freeze import setup, Executable
 
 setup(
@@ -11,18 +9,14 @@ setup(
     options = {
         "build_exe" : {
             "includes" : [
-                "modules.Attack",
-                "modules.Exist",
-                "modules.Item",
-                "modules.Person",
-                "modules.Player",
-                "modules.Room",
-                "modules.Thing"
-            ]
+            ],
+            "include_files": [
+                "base/","modules/"
+            ],
         }
     },
     executables = [
-        Executable("main.py", base="Win32GUI")
+        Executable("main.py", base="Console")
     ]
 )
     

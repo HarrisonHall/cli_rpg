@@ -8,6 +8,7 @@ class Room(Exist.Exist):
         self.new_things = pdict.get("things", {})
 
     def enter(self):
+        """return Text for entering room."""
         return f"{self.description}"
 
     def __repr__(self):

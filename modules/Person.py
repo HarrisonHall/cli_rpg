@@ -25,9 +25,11 @@ class Person(Exist.Exist):
         return self.flags.get("will_sell", False)
 
     def is_alive(self):
+        """True if hp > 0"""
         return (self.hp > 0)
 
     def is_dead(self):
+        """True if hp <= 0"""
         return (self.hp <= 0)
 
     def interact(self, player, room):
@@ -80,6 +82,9 @@ class Person(Exist.Exist):
             return self.do_attack(player, room)
 
     def do_about(self, player, room):
+        """
+        Text about player
+        """
         d = self.interact(player, room)
         d["message"] = (
             f"NAME: {self.name}\n"
