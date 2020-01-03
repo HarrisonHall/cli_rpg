@@ -9,7 +9,8 @@ class Attack(Exist.Exist):
     """
     def class_specific(self, pdict):
         self.atype = pdict.get("type", "Physical")
-        self.magic = pdict.get("magic", 10)
+        self.magic = pdict.get("magic", 0)
+        self.energy = pdict.get("energy", 0)
         self.damage = pdict.get("damage", 1)
 
         self.level_multiplier = pdict.get("level_multipler", 0)
@@ -17,16 +18,17 @@ class Attack(Exist.Exist):
         self.effects = pdict.get("effects", {})
 
 
-    def damage_and_effects(self, caster, enemy, room):
+    def damage_and_effects(self, caster, enemy, room, mod={}):
         total_damage = (
             self.damage + (
                 self.damage * caster.level * self.level_multiplier
-            )
+            ) * mod.get("damage_multiplier", 1) + 
+            mod.get("extra_damage", 0)
         )
         message1 = enemy.do_damage(total_damage)
         caster.magic -= self.magic
 
-        for e in self.calculate_special_effects(caster, enemy):
+        for e in self.calculate_special_effects(caster, enemy, mod=mod):
             if e in caster.effects:
                 caster.effects[e] += 1
             else:
@@ -37,16 +39,17 @@ class Attack(Exist.Exist):
         back["message"] = message1 + "\n" + message2
         return back
 
-    def damage_and_effects_back(self, caster, enemy, room):
+    def damage_and_effects_back(self, caster, enemy, room, mod={}):
         total_damage = (
             self.damage + (
                 self.damage * caster.level * self.level_multiplier
-            )
+            ) * mod.get("damage_multiplier", 1) + 
+            mod.get("extra_damage", 0)
         )
         message1 = enemy.do_damage(total_damage)
         caster.magic -= self.magic
 
-        for e in self.calculate_special_effects(caster, enemy):
+        for e in self.calculate_special_effects(caster, enemy, mod=mod):
             if e in caster.effects:
                 caster.effects[e] += 1
             else:
@@ -54,14 +57,19 @@ class Attack(Exist.Exist):
         return message1
 
 
-    def calculate_special_effects(self, caster, enemy):
-        """Appends effects to enemy based on probability given by effect value."""
+    def calculate_special_effects(self, caster, enemy, mod={}):
+        """
+        Appends effects to enemy based on probability given by effect value.
+        """
         e = []
         if False:
             pass
         else:
             r = uniform(0, 1)
-            for effect in self.effects:
+            effects = {}
+            effects.update(self.effects)
+            effects.update(mod.get("effects",{}))
+            for effect in effects:
                 if self.effects.get(effect, 1) <= r:
                     caster.effects[effect] = 0
                     e.append(effect)

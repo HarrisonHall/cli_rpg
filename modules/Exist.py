@@ -7,6 +7,7 @@ class Exist:
     rooms = {}
     things = {}
     items = {}
+    weapons = {}
     debug = False
     LOGGING = False
     logger = None
@@ -45,7 +46,7 @@ class Exist:
             cls,
             all_attacks={}, all_people={},
             all_rooms = {}, all_things = {},
-            all_items={}
+            all_items={}, all_weapons={}
     ):
         """Update dictionaries of all objects.
         
@@ -56,6 +57,7 @@ class Exist:
         cls.things.update(all_things)
         cls.people.update(all_people)
         cls.items.update(all_items)
+        cls.weapons.update(all_weapons)
         return None
 
     @classmethod

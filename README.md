@@ -17,6 +17,7 @@
 ### Inventory
 * [x] Items
 * [ ] Weapons
+* [ ] Selling
 ### Story
 * [ ] Timed enforcement of game elements
 ### Game

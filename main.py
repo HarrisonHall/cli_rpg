@@ -1,7 +1,7 @@
 from json import load
 from modules import Exist, Party, Person
 from modules import Thing, Room, Attack
-from modules import Item
+from modules import Item, Weapon
 from os import listdir
 from sys import argv, exit
 from os.path import isdir
@@ -121,15 +121,17 @@ people = {}
 things = {}
 attacks = {}
 items = {}
+weapons = {}
 objs_from_dirs(Person.Person, people, "base/people")
 objs_from_dirs(Room.Room, rooms, "base/rooms")
 objs_from_dirs(Thing.Thing, things, "base/things")
 objs_from_dirs(Attack.Attack, attacks, "base/attacks")
 objs_from_dirs(Item.Item, items, "base/items")
+objs_from_dirs(Weapon.Weapon, weapons, "base/weapons")
 Exist.Exist.update_all_dicts(
     all_attacks=attacks, all_people=people,
     all_things=things, all_rooms=rooms,
-    all_items=items
+    all_items=items, all_weapons=weapons
 )
 Exist.Exist.debug = True
 Exist.Exist.start_log()

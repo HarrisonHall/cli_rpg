@@ -6,6 +6,7 @@ class Person(Exist.Exist):
         self.hp = pdict.get("hp", 5)  # current life
         self.max_hp = pdict.get("max_hp", self.hp)
         self.magic = pdict.get("magic", 1)  # magic
+        self.energy = pdict.get("energy", 10)
         self.armor = pdict.get("armor", 1)
 
         self.level = pdict.get("level", 2)
@@ -13,6 +14,10 @@ class Person(Exist.Exist):
         self.in_battle = pdict.get("in_battle", False)
 
         self.race = pdict.get("race", "human")
+
+        self.usable_weapons = pdict.get("weapons", {
+            "hand": None
+        })
 
         self.usable_attacks = pdict.get("attacks", {})
         if "all" in self.usable_attacks:
@@ -43,6 +48,7 @@ class Person(Exist.Exist):
         return (self.hp <= 0)
 
     def interact(self, player, room):
+        print(self.in_party, "party")
         if self.in_party:
             return self.party_interaction(player, room)
         
@@ -77,11 +83,11 @@ class Person(Exist.Exist):
             }
         return d
 
-    def party_interaction(self):
+    def party_interaction(self, party, room):
         return {
             "About": {
                 "fun": self.do_about,
-                "vals": [player, room]
+                "vals": [self, room]
             },
             "Inventory": {
                 "fun": self.do_inventory,
@@ -116,10 +122,14 @@ class Person(Exist.Exist):
     def get_attacks(self, person, room):
         d = {}
         for attack in self.usable_attacks:
-            d[self.attacks[attack]] = {
-                "fun": self.attacks[attack].damage_and_effects,
-                "vals": [self, person, room]
-            }
+            if attack in self.attacks:
+                d[self.attacks[attack]] = {
+                    "fun": self.attacks[attack].damage_and_effects,
+                    "vals": [self, person, room]
+                }
+        for weapon in self.usable_weapons:
+            if weapon in self.weapons:
+                d.update(self.weapons[weapon].get_attacks(self, person, room))
         if not person.in_battle: # todo and player in battle?
             d["Back"] = {
                 "fun": person.interact,
@@ -233,6 +243,14 @@ class Person(Exist.Exist):
             "fun": self.interact,
             "vals": [player, room]
         }
+        return d
+
+    def do_flags(self):
+        d = self.interact(self, None)
+        mess = ""
+        for flag in self.flags:
+            mess += flag + '\n'
+        d["message"] = mess
         return d
 
     def __repr__(self):

@@ -4,7 +4,8 @@ class Party():
     def __init__(self, debug=True):
         self.players = []
         if debug:
-            self.players.append(self.debug_player1())
+            self.add_member(self.debug_player1())
+            self.add_member(self.debug_player2())
         self.current_player = self.players[0]
 
     def debug_player1(self):
@@ -24,14 +25,57 @@ class Party():
                         }
                     },
                     "attacks": {
-                        "all": {}
+                        "Fire Blast": None,
+                        "Frost": None,
+                        "Lick": None,
+                        "Pout": None,
+                        "Harrass": None,
                     },
                     "story_point": 0,
                     "events": {
                         "start": None,
                         "begin": None
                     },
-                    "current_event": "start"
+                    "current_event": "start",
+                    "weapons": {
+                        "Standard Rapier": None,
+                        "Hand": None
+                    }
+                }
+            },
+            in_party=True
+        )
+        return player
+
+    def debug_player2(self):
+        player = Person.Person(
+            {
+                "Sara Q'Dwel" : {
+                    "hp": 5,
+                    "max_hp": 5,
+                    "magic": 5,
+                    "armor": 3,
+                    "race": "Mutt",
+                    "level": 2,
+                    "inventory": {
+                        "Elixir": {
+                            "count": 1
+                        }
+                    },
+                    "attacks": {
+                        "Uppercut": None,
+                        "Pout": None,
+                        "Lick": None,
+                    },
+                    "story_point": 0,
+                    "events": {
+                        "start": None,
+                        "begin": None
+                    },
+                    "current_event": "start",
+                    "weapons": {
+                        "Hand": None
+                    }
                 }
             },
             in_party=True
@@ -52,6 +96,10 @@ class Party():
                 "fun": self.do_lead,
                 "vals": []
             },
+            "Manage Members": {
+                "fun": self.members,
+                "vals": []
+            },
             "Back": {
                 "fun": None,
                 "vals": [],
@@ -61,6 +109,10 @@ class Party():
     def __repr__(self):
         mess = "PARTY"
         return mess
+
+    def add_member(self, person):
+        self.players.append(person)
+        person.in_party = True
 
     def do_flags(self):
         message = ""
@@ -98,3 +150,16 @@ class Party():
         l = self.interact()
         l["message"] = "ABOUT PARTY TODO"
         return l
+
+    def members(self):
+        d = {}
+        for player in self.players:
+            d[player] = {
+                "fun": player.interact,
+                "vals": [self, None]
+            }
+        d["Back"] = {
+            "fun": self.interact,
+            "vals": []
+        }
+        return d
