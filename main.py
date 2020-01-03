@@ -84,7 +84,7 @@ def get_current_stuff(room, party):
             if rooms[room2].exists_yet(player):
                 current[rooms[room2]] = {
                     "fun": goto_room,
-                    "vals": [room2,player]
+                    "vals": [room2, party]
                 }
         
     current[party] = {
@@ -98,7 +98,7 @@ def goto_room(new_room, player):
     player.room = rooms[new_room]
 
 current_place = "Hallway"
-party = Party.Party()
+party = Party.Party(debug=True)
 
 print("CLI RPG DEMO BY HARRISON HALL")
 

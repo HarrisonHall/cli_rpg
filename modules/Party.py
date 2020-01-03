@@ -1,7 +1,7 @@
 from modules import Person
 
 class Party():
-    def __init__(self, debug=True):
+    def __init__(self, debug=False):
         self.players = []
         if debug:
             self.add_member(self.debug_player1())

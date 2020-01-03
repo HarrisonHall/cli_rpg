@@ -1,7 +1,7 @@
 from json import load
-from modules import Exist, Player, Person
+from modules import Exist, Party, Person
 from modules import Thing, Room, Attack
-from modules import Item
+from modules import Item, Weapon
 from os import listdir
 from sys import argv, exit
 from os.path import isdir
@@ -95,7 +95,11 @@ def interact(some_dict, room, wins, stdscr):
     if "message" in some_dict:
         text_win.add_to_buf(some_dict["message"])
         some_dict.pop("message")
-    char_win.add_to_buf(player.status_message(), clear=True)
+
+    char_win.add_to_buf("STATUS", clear=True)
+    for player in party.players:
+        char_win.add_to_buf(player.status_message(), clear=False)
+        char_win.add_to_buf(" ")
 
     if "quit" in some_dict:
         do_exit(stdscr)
@@ -123,7 +127,8 @@ def interact(some_dict, room, wins, stdscr):
         interact(choice["fun"](*choice["vals"]), room, wins, stdscr)
     return None
 
-def get_current_stuff(room, player, stdscr):
+def get_current_stuff(room, party, stdscr):
+    player = party.current_player
     current = {}
     for person in room.new_people:
         r = room.new_people[person]
@@ -157,7 +162,7 @@ def get_current_stuff(room, player, stdscr):
             if rooms[room2].exists_yet(player):
                 current[rooms[room2]] = {
                     "fun": goto_room,
-                    "vals": [room2,player]
+                    "vals": [room2, party]
                 }
         
     current[player] = {
@@ -175,10 +180,9 @@ def goto_room(new_room, player):
     player.room = rooms[new_room]
 
 current_place = "Hallway"
-player = Player.Player()
+party = Party.Party(debug=True)
 
 print("CLI RPG DEMO BY HARRISON HALL")
-print(f"Player is {player.name}")
 
 def objs_from_dirs(the_class, obj_dict, dir_name):
     for file1 in listdir(dir_name):
@@ -199,16 +203,20 @@ people = {}
 things = {}
 attacks = {}
 items = {}
+weapons = {}
 objs_from_dirs(Person.Person, people, "base/people")
 objs_from_dirs(Room.Room, rooms, "base/rooms")
 objs_from_dirs(Thing.Thing, things, "base/things")
 objs_from_dirs(Attack.Attack, attacks, "base/attacks")
 objs_from_dirs(Item.Item, items, "base/items")
+objs_from_dirs(Weapon.Weapon, weapons, "base/weapons")
 Exist.Exist.update_all_dicts(
     all_attacks=attacks, all_people=people,
     all_things=things, all_rooms=rooms,
-    all_items=items
+    all_items=items, all_weapons=weapons
 )
+Exist.Exist.debug = True
+#Exist.Exist.start_log()
 print("DONE LOADING\n---")
 
 
@@ -239,7 +247,7 @@ if __name__ == "__main__":
             exit()
     
 
-    goto_room(current_place, player)
+    goto_room(current_place, party)
     while True:
-        options = get_current_stuff(player.room, player, stdscr)
-        interact(options, player.room, [text_win, choice_win, char_win], stdscr)
+        options = get_current_stuff(party.room, party, stdscr)
+        interact(options, party.room, [text_win, choice_win, char_win], stdscr)

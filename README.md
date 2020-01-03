@@ -16,10 +16,9 @@
 * [ ] Time of day
 ### Inventory
 * [x] Items
-* [ ] Weapons
+* [x] Weapons
 * [ ] Selling
 ### Story
-* [ ] Timed enforcement of game elements
+* [ ] ~~Timed enforcement of game elements~~ Event_Handler
 ### Game
 * [ ] Story Stuff
-

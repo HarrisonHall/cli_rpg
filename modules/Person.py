@@ -91,7 +91,7 @@ class Person(Exist.Exist):
             },
             "Inventory": {
                 "fun": self.do_inventory,
-                "vals": []
+                "vals": [self, room]
             },
             "Flags": {
                 "fun": self.do_flags,
@@ -111,13 +111,16 @@ class Person(Exist.Exist):
             self.debug_print("DEBUG ON")
             self.log("TEST LOG")
         d = self.interact(player, room)
-        d["message"] = (
+        d["message"] = self.status_message()
+        return d
+
+    def status_message(self):
+        return (
             f"NAME: {self.name}\n"
             f"RACE: {self.race}\n"
             f"ARM: {self.armor}\n"
             f"DESC: {self.description}"
         )
-        return d
 
     def get_attacks(self, person, room):
         d = {}
