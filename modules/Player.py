@@ -1,7 +1,7 @@
-from modules import Exist
+from modules import Person
 
-class Player(Exist.Exist):
-    def class_specific(self, pdict):
+class Player(Person.Person):
+    def class_specific(self, pdict, in_party=False):
         self.name = "Äaä Berd"
         self.hp = 10
         self.max_hp = 10
@@ -27,6 +27,8 @@ class Player(Exist.Exist):
             "begin": None,
         }
         self.current_event = "start"
+
+        self.in_party = in_party
 
     def interact(self):
         return {
@@ -85,7 +87,6 @@ class Player(Exist.Exist):
             f"RACE: {self.race}"
         )
 
-
     def get_attacks(self, person, room):
         d = {}
         for attack in self.usable_attacks:
@@ -113,20 +114,6 @@ class Player(Exist.Exist):
                 "{:.2f}".format(damage) + " damage."
             )
             return mess
-
-    def add_item(self, item, count):
-        if item in self.items:
-            for event in self.items[item].events:
-                self.events[event] = self.items[item].events[event]
-        if item in self.inventory:
-            self.inventory[item]["count"] = (
-                self.inventory[item].get("count", 1) + count
-            )
-        else:
-            self.inventory[item] = {
-                "count": count,
-            }
-        return None
 
     def do_flags(self):
         message = ""

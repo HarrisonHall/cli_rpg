@@ -34,8 +34,8 @@ class window:
         l = text.split("\n")
         for line in l:
             self.buf.append(line)
-            if len(self.buf) > self.h:
-                self.buf = self.buf[1:]
+            if len(self.buf) > self.h - 2:
+                self.buf = self.buf[3:]
 
     def add_choices_to_buf(self, choice_list, clear=True):
         if clear:

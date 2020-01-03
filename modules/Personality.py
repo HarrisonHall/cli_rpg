@@ -1,8 +1,12 @@
 from modules import Exist
 
-class Personality(Exist.Exist):
+class Personality():
     def __init__(self, pdict):
+        # Rapports is a -10 to +10 scale of how likable
+        # someone is to another.
         self.rapports = pdict.get("rapports", {})
+        
+        # Personality scale from 0 to 10 for each trait.
         self.personality = pdict.get(
             "personality",
             {
@@ -29,30 +33,54 @@ class Personality(Exist.Exist):
     def conscientiousness(self):
         return self.personality["conscientiousness"]
 
-    def add_rapport(self, person, flag, value):
-        if person.name not in self.rapports:
-            self.rapports[person.name] = {
-                "count": 1,
-                flag: value
-            }
+    def base_rapport(self):
+        s = 0
+        for trait in self.personality:
+            s += self.personality[trait] - 5
+        return s
+
+    def add_rapport(self, person, value):
+        count = self.get_rapport_count(person) + 1
+        self.rapports[person.name] = {
+            "count": count,
+            "val": self.get_rapport(person) + (value / count)
+        }
+        if value > 0:
+            return f"{person.name}'s rapport has increased."
+        elif value < 0:
+            return f"{person.name}'s rapport has decreased."
+        return ""
+
+    def get_rapport(self, person):
+        if person.name in self.rapports:
+            return self.rapports[person.name]["val"]
         else:
-            if flag in self.rapports[person.name]:
-                self.rapports[person.name][flag] += value
-            else:
-                self.rapports[person.name][flag] = value
+            return self.base_rapport()
+
+    def get_rapport_count(self, person):
+        if person.name in self.rapports:
+            return self.rapports[person.name]["count"]
+        else:
+            return 0
 
     def is_creeped_out(self, person):
-        if person.name not in self.personality:
+        if self.get_rapport(person) < 0:
             if self.agreeableness() + self.openness() < self.neuroticism():
                 return True
-        else:
-            rapport = self.rapports[person.name]
-            
         return False
 
     def is_seducable(self, person):
-        if person.name not in self.personality:
+        if self.get_rapport(person) > 0:
             if person.openness() > self.conscientiousness() + self.neuroticism():
                 return True
-        else:
-            return False
+        return False
+
+    def is_friend(self, person):
+        if self.get_rapport(self, person) > self.neuroticism():
+            return True
+        return False
+
+    def is_aggressive(self, person):
+        if self.extraversion() + self.neuroticism() > self.openness() + self.conscientiousness() + self.agreeableness():
+            return True
+        return False

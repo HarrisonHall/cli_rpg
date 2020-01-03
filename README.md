@@ -9,8 +9,8 @@
 * [ ] Person skill tree
 * [ ] Custscene dialogue support
 ### Party
-* [ ] Make party
-* [ ] Make player inherit from person
+* [x] Make party
+* [x] Make player inherit from person
 ### Rooms
 * [x] Changing Rooms
 * [ ] Time of day

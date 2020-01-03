@@ -1,4 +1,5 @@
 from modules import LogLog
+from modules import Personality
 
 class Exist:
     attacks = {}
@@ -10,7 +11,7 @@ class Exist:
     LOGGING = False
     logger = None
     
-    def __init__(self, pdict={}, debug=False):
+    def __init__(self, pdict={}, debug=False, in_party=False):
         self.debug = debug
         if pdict == {}:
             self.name = ""
@@ -30,12 +31,14 @@ class Exist:
         self.description = pdict.get("description", "")
 
         self.story_points = pdict.get("story_point", {"start": None})
+        self.personality = Personality.Personality(pdict)
 
+        if in_party:
+            self.class_specific(pdict, in_party=True)
         self.class_specific(pdict)
 
-    def class_specific(self, pdict):
-        """Reserved for everything that inherits from Exist."""
-        return None
+    def __repr__(self):
+        return self.name
 
     @classmethod
     def update_all_dicts(
@@ -79,9 +82,6 @@ class Exist:
                 print(event, key)
                 return True
         return False
-
-    def __repr__(self):
-        return self.name
 
     def interact(self, player, room):
         """Base interaction does nothing."""
@@ -175,6 +175,7 @@ class Exist:
 
     def give_item(self, player, room, item, count):
         """Give item to a player."""
+        self.personality.add_rapport(player, 1)
         if item == "all":
             tot = {}
             tot.update(self.inventory)
@@ -197,6 +198,29 @@ class Exist:
         r["message"] = "Item(s) added."
         return r
 
+    def add_item(self, item, count):
+        if item in self.items:
+            for event in self.items[item].events:
+                self.events[event] = self.items[item].events[event]
+        if item in self.inventory:
+            self.inventory[item]["count"] = (
+                self.inventory[item].get("count", 1) + count
+            )
+        else:
+            self.inventory[item] = {
+                "count": count,
+            }
+        return None
+
+    def class_specific(self, pdict):
+        """Reserved for everything that inherits from Exist."""
+        return None
+
     def debug_print(self, message):
+        """
+        Print to console (if debug).
+
+        Alternatively .log(message) should be used.
+        """
         if Exist.debug:
             print(message)

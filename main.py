@@ -1,5 +1,5 @@
 from json import load
-from modules import Exist, Player, Person
+from modules import Exist, Party, Person
 from modules import Thing, Room, Attack
 from modules import Item
 from os import listdir
@@ -40,6 +40,8 @@ def interact(some_dict, room):
         for i, l1 in enumerate(l):
             print(f"{i}) {l1}")
         c = input(">> ")
+        if 'q' in c:
+            exit()
         if not is_valid(c):
             print("Not valid.")
     choice = some_dict[l[int(c)]]
@@ -47,11 +49,12 @@ def interact(some_dict, room):
         interact(choice["fun"](*choice["vals"]), room)
     return None
 
-def get_current_stuff(room, player):
+def get_current_stuff(room, party):
     current = {}
+    player = party.current_player
     for person in room.new_people:
         r = room.new_people[person]
-        if r.get("exists","begin") not in player.events:
+        if r.get("exists","begin") not in party.events():
             continue
         if person in people:
             if people[person].exists_yet(player):
@@ -84,13 +87,9 @@ def get_current_stuff(room, player):
                     "vals": [room2,player]
                 }
         
-    current[player] = {
-        "fun": player.interact,
+    current[party] = {
+        "fun": party.interact,
         "vals": [],
-    }
-    current["exit"] = {
-        "fun": exit,
-        "vals": []
     }
     return current
 
@@ -99,10 +98,9 @@ def goto_room(new_room, player):
     player.room = rooms[new_room]
 
 current_place = "Hallway"
-player = Player.Player()
+party = Party.Party()
 
 print("CLI RPG DEMO BY HARRISON HALL")
-print(f"Player is {player.name}")
 
 def objs_from_dirs(the_class, obj_dict, dir_name):
     for file1 in listdir(dir_name):
@@ -142,12 +140,12 @@ print("DONE LOADING\n---")
 if __name__ == "__main__":
     for w in argv:
         if w in ["v"]:
-            print(f"Spells: {player.spells}")
+            print(f"Attacks: {party.current_player.usable_attacks}")
             print(f"People: {people}")
             print(f"Places: {rooms}")
             exit()
 
-    goto_room(current_place, player)
+    goto_room(current_place, party)
     while True:
-        options = get_current_stuff(player.room, player)
-        interact(options, player.room)
+        options = get_current_stuff(party.room, party)
+        interact(options, party.room)
