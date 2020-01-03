@@ -1,11 +1,17 @@
+from modules import LogLog
+
 class Exist:
     attacks = {}
     people = {}
     rooms = {}
     things = {}
     items = {}
+    debug = False
+    LOGGING = False
+    logger = None
     
-    def __init__(self, pdict={}):
+    def __init__(self, pdict={}, debug=False):
+        self.debug = debug
         if pdict == {}:
             self.name = ""
         else:
@@ -49,6 +55,15 @@ class Exist:
         cls.items.update(all_items)
         return None
 
+    @classmethod
+    def start_log(cls):
+        cls.LOGGING = True
+        cls.logger = LogLog.LogLog()
+
+    def log(self, message):
+        if self.LOGGING:
+            self.logger.log(message)
+
     def exists_yet(self, player):
         """Returns True if player contains event in story_point."""
         for event in player.events:
@@ -77,6 +92,7 @@ class Exist:
         Finds most likely key between player and object.
         
         TODO: special circumstances for room.
+        This function needs to be overhaulled before story.
         """
         if player.current_event in self.dialogue:
             return player.current_event
@@ -114,7 +130,12 @@ class Exist:
         if "flags" in d:
             if "give" in d["flags"]:
                 for item in d["flags"]["give"]:
-                    self.give_item(player, room, item, d["flags"]["give"][item])
+                    self.give_item(
+                        player,
+                        room,
+                        item,
+                        d["flags"]["give"][item]
+                    )
             if "end" in d["flags"]:
                 r = self.interact(player, room)
                 r.update(update)
@@ -160,14 +181,22 @@ class Exist:
             for item in self.inventory:
                 key = self.inventory[item].get("exists", "start")
                 if self.thing_exists_yet(player, key):
-                    player.add_item(item, self.inventory[item].get("count", 1))
+                    player.add_item(
+                        item,
+                        self.inventory[item].get("count", 1)
+                    )
                     tot.pop(item)
             self.inventory = tot
         else:
             player.add_item(item, count)
-            self.inventory[item]["count"] = self.inventory[item].get("count", 1) - count
+            new_count = self.inventory[item].get("count", 1) - count
+            self.inventory[item]["count"] = new_count
             if self.inventory[item]["count"] <= 0:
                 self.inventory.pop(item)
         r = self.do_inventory(player, room)
         r["message"] = "Item(s) added."
         return r
+
+    def debug_print(self, message):
+        if Exist.debug:
+            print(message)

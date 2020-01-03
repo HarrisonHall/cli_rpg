@@ -1,4 +1,5 @@
 from modules import Exist
+from modules import Personality
 from random import choices
 
 class Person(Exist.Exist):
@@ -21,6 +22,8 @@ class Person(Exist.Exist):
             f"{self.name} has died."
         )
 
+        self.personality = Personality.Personality(pdict)
+
     def will_sell(self):
         return self.flags.get("will_sell", False)
 
@@ -33,53 +36,37 @@ class Person(Exist.Exist):
         return (self.hp <= 0)
 
     def interact(self, player, room):
+        key = self.get_key(player, room)
+        d = {}
+        d["About"] = {
+            "fun": self.do_about,
+            "vals": [player, room]
+        }
+        d["Description"] = {
+            "fun": self.do_description,
+            "vals": [player, room]
+        }
         if self.is_dead():
-            key = self.get_key(player, room)
-            return {
-                "About": {
-                    "fun": self.do_about,
-                    "vals": [player, room],
-                },
-                "Description": {
-                    "fun": self.do_description,
-                    "vals": [player, room]
-                },
-                "Inventory": {
-                    "fun": self.do_inventory,
-                    "vals": [player, room]
-                },
-                "Back": {
-                    "fun": None,
-                    "vals": []
-                }
-
+            d["Inventory"] = {
+                "fun": self.do_inventory,
+                "vals": [player, room]
             }
-        elif not self.in_battle:
-            key = self.get_key(player, room)
-            return {
-                "About": {
-                    "fun": self.do_about,
-                    "vals": [player, room],
-                },
-                "Dialogue": {
-                    "fun": self.do_dialogue,
-                    "vals": [key, player, room]
-                },
-                "Description": {
-                    "fun": self.do_description,
-                    "vals": [player, room]
-                },
-                "Attack": {
-                    "fun": self.do_attack,
-                    "vals": [player, room]
-                },
-                "Back": {
-                    "fun": None,
-                    "vals": []
-                }
+        d["Attack"] = {
+            "fun": self.do_attack,
+            "vals": [player, room]
+        }
+        if self.in_battle:
+            pass
+        if not self.in_battle:
+            d["Attack"] = {
+                "fun": self.do_attack,
+                "vals": [player, room]
             }
-        else: # battle
-            return self.do_attack(player, room)
+            d["Back"] = {
+                "fun": None,
+                "vals": []
+            }
+        return d
 
     def do_about(self, player, room):
         """
@@ -114,20 +101,44 @@ class Person(Exist.Exist):
         return mess
 
     def do_damage(self, damage, now_in_battle=True):
+        mess = ""
         self.hp -= damage
         if self.hp <= 0:
             self.hp = 0
         if self.is_dead():
-            return self.death_message
+            return mess + "\n" + self.death_message
         else:
-            mess = (
-                self.name + " has taken " +
+            mess += (
+                "\n" + self.name + " has taken " +
                 "{:.2f}".format(damage) + " damage."
             )
-            if now_in_battle and not self.in_battle:
+            if now_in_battle and not self.in_battle and damage >= 0:
                 self.in_battle = True
                 mess += f"\n{self.name} is now in battle."
-            return mess
+        mess += self.manage_effects()
+        return mess
+
+    def manage_effects(self):
+        mess = ""
+        tot_effects = {}
+        tot_effects.update(self.effects)
+        for effect in self.effects:
+            self.effects[effect] += 1
+        for effect in self.effects:
+            if effect == "in_battle":
+                if not self.in_battle:
+                    self.in_battle = True
+                    mess += f"{self.name} now in battle."
+                if self.effects["in_battle"] >= 3:
+                    tot_effects.pop("in_battle")
+            elif effect == "seduce":
+                pass
+            elif effect == "creep":
+                pass
+            elif effect == "sadden":
+                pass
+        self.effects = tot_effects
+        return mess
 
     def do_inventory(self, player, room):
         d = {}
@@ -149,3 +160,8 @@ class Person(Exist.Exist):
             "vals": [player, room]
         }
         return d
+
+    def __repr__(self):
+        if self.is_dead():
+            return f"X {self.name}"
+        return self.name

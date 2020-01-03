@@ -19,11 +19,7 @@ class Player(Exist.Exist):
                 "count": 1
             }
         }
-        self.usable_attacks = {
-            "Uppercut",
-            "Swing",
-            "Frost"
-        }
+        self.usable_attacks = self.attacks
 
         self.story_point = 0
         self.events = {
@@ -72,6 +68,8 @@ class Player(Exist.Exist):
         return d
 
     def do_about(self):
+        self.debug_print("DEBUG ON")
+        self.log("TEST LOG")
         d = self.interact()
         d["message"] = self.status_message()
         return d
@@ -90,8 +88,8 @@ class Player(Exist.Exist):
 
     def get_attacks(self, person, room):
         d = {}
-        for attack in self.attacks:
-            d[attack] = {
+        for attack in self.usable_attacks:
+            d[self.attacks[attack]] = {
                 "fun": self.attacks[attack].damage_and_effects,
                 "vals": [self, person, room]
             }

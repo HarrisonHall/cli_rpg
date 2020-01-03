@@ -31,6 +31,7 @@ class Attack(Exist.Exist):
                 caster.effects[e] += 1
             else:
                 caster.effects[e] = 1
+        message1 += enemy.manage_effects()
         message2 = enemy.attack_back(caster, room)
         back = enemy.interact(caster, room)
         back["message"] = message1 + "\n" + message2

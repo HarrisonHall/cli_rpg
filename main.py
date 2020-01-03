@@ -133,6 +133,8 @@ Exist.Exist.update_all_dicts(
     all_things=things, all_rooms=rooms,
     all_items=items
 )
+Exist.Exist.debug = True
+Exist.Exist.start_log()
 print("DONE LOADING\n---")
 
 

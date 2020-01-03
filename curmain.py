@@ -7,9 +7,6 @@ from sys import argv, exit
 from os.path import isdir
 import curses
 
-import logging
-logging.basicConfig(filename='logs/test.log',level=logging.DEBUG)
-
 global text_buf
 global choice_buf
 
@@ -26,7 +23,6 @@ class window:
         start = 1
         self.win.clear()
         for line in self.buf:
-            logging.debug(f"{start} {self.x} {line} {self.w}")
             self.win.addnstr(start, 1, line, self.w-2)
             start += 1
         self.win.border()
@@ -50,7 +46,6 @@ class window:
             to_add = choice_list[i]
             i += 1
             if i in range(len(choice_list)):
-                logging.debug("True")
                 to_add2 = choice_list[i]
                 i += 1
                 if len(to_add) > self.w // 2:

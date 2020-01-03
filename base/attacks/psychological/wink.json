@@ -1,0 +1,12 @@
+{
+    "Wink": {
+        "magic" : 0,
+        "type": "Psychological",
+        "damage" : 0,
+        "level_multiplier" : 1,
+        "effects": {
+            "seduce": 0.1,
+            "creep": 0.1
+        }
+    }
+}
