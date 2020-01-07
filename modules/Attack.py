@@ -17,6 +17,13 @@ class Attack(Exist.Exist):
 
         self.effects = pdict.get("effects", {})
 
+    def type_symbol(self):
+        return {
+            "Physical": "👊",
+            "Magical": "📖",
+            "Psychological": "🧠",
+            "Standard": "☮",
+        }.get(self.atype, self.atype)
 
     def damage_and_effects(self, caster, enemy, room, mod={}):
         total_damage = (
@@ -82,4 +89,4 @@ class Attack(Exist.Exist):
         return False
 
     def __repr__(self):
-        return f"{self.atype} || {self.name}"
+        return f"{self.type_symbol()} || {self.name}"

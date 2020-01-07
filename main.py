@@ -1,12 +1,10 @@
-from json import load
-from modules import Exist, Party, Person
-from modules import Thing, Room, Attack
-from modules import Item, Weapon
-from os import listdir
+from modules import Party
+from modules import EventHandler
+from modules import Exist
 from sys import argv, exit
-from os.path import isdir
 
-def interact(some_dict, room):
+
+def interact(some_dict, room, eh):
     def is_valid(character):
         if character.isdigit():
             if int(character) in range(len(some_dict.keys())):
@@ -46,108 +44,23 @@ def interact(some_dict, room):
             print("Not valid.")
     choice = some_dict[l[int(c)]]
     if choice["fun"] is not None:
-        interact(choice["fun"](*choice["vals"]), room)
+        interact(choice["fun"](*choice["vals"]), room, eh)
     return None
 
-def get_current_stuff(room, party):
-    current = {}
-    player = party.current_player
-    for person in room.new_people:
-        r = room.new_people[person]
-        if r.get("exists","begin") not in party.events():
-            continue
-        if person in people:
-            if people[person].exists_yet(player):
-                current[people[person]] = {
-                    "fun": people[person].interact,
-                    "vals": [player, room]
-                }
-        else:
-            pass
-            #print(f"{person} not in people")
-    for thing in room.new_things:
-        if room.new_things[thing].get("exists","begin") not in player.events:
-            continue
-        if thing in things:
-            if things[thing].exists_yet(player):
-                current[thing] = {
-                    "fun": things[thing].interact,
-                    "vals": [player, room],
-                }
-        else:
-            pass
-            #print(f"{thing} not in things")
-    for room2 in room.new_rooms:
-        if room.new_rooms[room2].get("exists", "begin") not in player.events:
-            continue
-        if room2 in rooms:
-            if rooms[room2].exists_yet(player):
-                current[rooms[room2]] = {
-                    "fun": goto_room,
-                    "vals": [room2, party]
-                }
-        
-    current[party] = {
-        "fun": party.interact,
-        "vals": [],
-    }
-    return current
-
-def goto_room(new_room, player):
-    print(f"ENTER: {new_room}")
-    player.room = rooms[new_room]
 
 current_place = "Hallway"
 party = Party.Party(debug=True)
 
 print("CLI RPG DEMO BY HARRISON HALL")
 
-def objs_from_dirs(the_class, obj_dict, dir_name):
-    for file1 in listdir(dir_name):
-        cur_name = f"{dir_name}/{file1}"
-        if isdir(cur_name):
-            objs_from_dirs(the_class, obj_dict, cur_name)
-            continue
-        print(f"FILE {cur_name}")
-        f = open(cur_name, "r")
-        new_obj = the_class(pdict=load(f))
-        obj_dict.update({
-            new_obj.name : new_obj   
-        })
-        f.close()
-
-rooms = {}
-people = {}
-things = {}
-attacks = {}
-items = {}
-weapons = {}
-objs_from_dirs(Person.Person, people, "base/people")
-objs_from_dirs(Room.Room, rooms, "base/rooms")
-objs_from_dirs(Thing.Thing, things, "base/things")
-objs_from_dirs(Attack.Attack, attacks, "base/attacks")
-objs_from_dirs(Item.Item, items, "base/items")
-objs_from_dirs(Weapon.Weapon, weapons, "base/weapons")
-Exist.Exist.update_all_dicts(
-    all_attacks=attacks, all_people=people,
-    all_things=things, all_rooms=rooms,
-    all_items=items, all_weapons=weapons
-)
+eh = EventHandler.EventHandler()
 Exist.Exist.debug = True
 Exist.Exist.start_log()
 print("DONE LOADING\n---")
 
 
-
 if __name__ == "__main__":
-    for w in argv:
-        if w in ["v"]:
-            print(f"Attacks: {party.current_player.usable_attacks}")
-            print(f"People: {people}")
-            print(f"Places: {rooms}")
-            exit()
-
-    goto_room(current_place, party)
+    eh.enter_room(party, current_place)
     while True:
-        options = get_current_stuff(party.room, party)
-        interact(options, party.room)
+        options = eh.base_interaction(party.room, party)
+        interact(options, party.room, eh)

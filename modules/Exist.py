@@ -1,5 +1,6 @@
 from modules import LogLog
 from modules import Personality
+from modules import FlagHandler
 
 class Exist:
     attacks = {}
@@ -24,10 +25,11 @@ class Exist:
         self.inventory = pdict.get("inventory", {})
 
         # mood, selling, other stuff
-        self.flags = pdict.get("flags", {})
+        self.flags = FlagHandler.FlagHandler(
+            pdict.get("flags", {})
+        )
         self.effects = {}
 
-        self.events = pdict.get("events", {})
         self.dialogue = pdict.get("dialogue", {})
         self.description = pdict.get("description", "")
 
@@ -71,18 +73,15 @@ class Exist:
 
     def exists_yet(self, player):
         """Returns True if player contains event in story_point."""
-        for event in player.events:
-            for point in self.story_points:
-                if event == point:
-                    return True
+        for point in self.story_points:
+            if player.check_flag(point):
+                return True
         return False
 
     def thing_exists_yet(self, player, key):
         """Returns True if specific thing shares event with key."""
-        for event in player.events:
-            if event == key:
-                print(event, key)
-                return True
+        if player.check_flag(key):
+            return True
         return False
 
     def interact(self, player, room):
@@ -101,6 +100,12 @@ class Exist:
         for k in self.dialogue:
             if k in player.events:
                 return k
+
+    def add_flag(self, flag, value):
+        self.flags.add_flag(flag, value)
+
+    def check_flag(self, flag):
+        return self.flags.check_flag(flag)
 
     def do_dialogue(self, key, player, room, message=None):
         """
@@ -124,11 +129,11 @@ class Exist:
                 "message": f"{message}\n{self.name}: {d['say']}"
             }
         if "event" in d:
-            player.events[d["event"]] = None
+            player.add_flag(d["event"], None)
             player.current_event = d["event"]
         if "events" in d:
             for event in d["events"]:
-                player.events[event] = d["events"][event]
+                player.add_flag(event, d["events"][event])
         if "flags" in d:
             if "give" in d["flags"]:
                 for item in d["flags"]["give"]:
@@ -212,6 +217,13 @@ class Exist:
             self.inventory[item] = {
                 "count": count,
             }
+        return None
+
+    def remove_item(self, item, count):
+        if item in self.inventory:
+            self.inventory[item] -= count
+            if self.inventory[item] <= 0:
+                self.inventory.pop(item)
         return None
 
     def class_specific(self, pdict):

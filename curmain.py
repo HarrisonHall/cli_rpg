@@ -1,10 +1,7 @@
-from json import load
-from modules import Exist, Party, Person
-from modules import Thing, Room, Attack
-from modules import Item, Weapon
-from os import listdir
+from modules import Party
+from modules import EventHandler
+from modules import Exist
 from sys import argv, exit
-from os.path import isdir
 import curses
 
 global text_buf
@@ -32,10 +29,12 @@ class window:
         if clear:
             self.buf = []
         l = text.split("\n")
+        if text.endswith("\n"):
+            l.append("ENDED WITH NEWLINE")
         for line in l:
             self.buf.append(line)
-            if len(self.buf) > self.h - 2:
-                self.buf = self.buf[3:]
+            if len(self.buf) > self.h - 1:
+                self.buf = self.buf[2:]
 
     def add_choices_to_buf(self, choice_list, clear=True):
         if clear:
@@ -66,7 +65,7 @@ def do_exit(stdscr):
     exit()
 
 
-def interact(some_dict, room, wins, stdscr):
+def interact(some_dict, room, wins, stdscr, eh):
     def is_valid(character):
         if character.isdigit():
             if int(character) in range(len(some_dict.keys())):
@@ -120,101 +119,21 @@ def interact(some_dict, room, wins, stdscr):
             curses.echo()
             curses.endwin()
             exit()
-        if not is_valid(c):
-            text_win.add_to_buf("Not valid.")
-    choice = some_dict[l[int(c)]]
+    num = l[int(c)]
+    choice = some_dict[num]
+    text_win.add_to_buf(f"{c}) {num}")
     if choice["fun"] is not None:
-        interact(choice["fun"](*choice["vals"]), room, wins, stdscr)
+        interact(
+            choice["fun"](*choice["vals"]), room, wins, stdscr, eh
+        )
     return None
-
-def get_current_stuff(room, party, stdscr):
-    player = party.current_player
-    current = {}
-    for person in room.new_people:
-        r = room.new_people[person]
-        if r.get("exists","begin") not in player.events:
-            continue
-        if person in people:
-            if people[person].exists_yet(player):
-                current[people[person]] = {
-                    "fun": people[person].interact,
-                    "vals": [player, room]
-                }
-        else:
-            pass
-            #print(f"{person} not in people")
-    for thing in room.new_things:
-        if room.new_things[thing].get("exists","begin") not in player.events:
-            continue
-        if thing in things:
-            if things[thing].exists_yet(player):
-                current[thing] = {
-                    "fun": things[thing].interact,
-                    "vals": [player, room],
-                }
-        else:
-            pass
-            #print(f"{thing} not in things")
-    for room2 in room.new_rooms:
-        if room.new_rooms[room2].get("exists", "begin") not in player.events:
-            continue
-        if room2 in rooms:
-            if rooms[room2].exists_yet(player):
-                current[rooms[room2]] = {
-                    "fun": goto_room,
-                    "vals": [room2, party]
-                }
-        
-    current[player] = {
-        "fun": player.interact,
-        "vals": [],
-    }
-    current["exit"] = {
-        "fun": do_exit,
-        "vals": [stdscr]
-    }
-    return current
-
-def goto_room(new_room, player):
-    #print(f"ENTER: {new_room}")
-    player.room = rooms[new_room]
 
 current_place = "Hallway"
 party = Party.Party(debug=True)
 
 print("CLI RPG DEMO BY HARRISON HALL")
 
-def objs_from_dirs(the_class, obj_dict, dir_name):
-    for file1 in listdir(dir_name):
-        cur_name = f"{dir_name}/{file1}"
-        if isdir(cur_name):
-            objs_from_dirs(the_class, obj_dict, cur_name)
-            continue
-        print(f"FILE {cur_name}")
-        f = open(cur_name, "r")
-        new_obj = the_class(pdict=load(f))
-        obj_dict.update({
-            new_obj.name : new_obj   
-        })
-        f.close()
-
-rooms = {}
-people = {}
-things = {}
-attacks = {}
-items = {}
-weapons = {}
-objs_from_dirs(Person.Person, people, "base/people")
-objs_from_dirs(Room.Room, rooms, "base/rooms")
-objs_from_dirs(Thing.Thing, things, "base/things")
-objs_from_dirs(Attack.Attack, attacks, "base/attacks")
-objs_from_dirs(Item.Item, items, "base/items")
-objs_from_dirs(Weapon.Weapon, weapons, "base/weapons")
-Exist.Exist.update_all_dicts(
-    all_attacks=attacks, all_people=people,
-    all_things=things, all_rooms=rooms,
-    all_items=items, all_weapons=weapons
-)
+eh = EventHandler.EventHandler()
 Exist.Exist.debug = True
 #Exist.Exist.start_log()
 print("DONE LOADING\n---")
@@ -223,31 +142,37 @@ print("DONE LOADING\n---")
 
 if __name__ == "__main__":
     stdscr = curses.initscr()
+    curses.resizeterm(35,90)
     curses.noecho()
     curses.cbreak()
     stdscr.keypad(True)
 
+    """
     h1 = int(curses.LINES*3/4)
     w1 = int(curses.COLS*3/4)
     h2 = h1
     w2 = curses.COLS - w1
     h3 = curses.LINES - h1
     w3 = curses.COLS
-    
+    """
+    h1 = 10
+    w1 = 60
+    h2 = 25
+    w2 = 30
+    h3 = 10
+    w3 = 90
+
+    """
     text_win = window(h1,w1, 0, 0)
     char_win = window(h2, w2, 0, w1)
     choice_win = window(h3, w3, h1, 0)
+    """
+    text_win = window(h1,w1, 15, 0)
+    char_win = window(h2, w2, 0, w1)
+    choice_win = window(h3, w3, h2, 0)
     text_win.add_to_buf("CURSES RPG DEMO\nBY HARRISON HALL")
 
-    for w in argv:
-        if w in ["v"]:
-            print(f"Spells: {player.spells}")
-            print(f"People: {people}")
-            print(f"Places: {rooms}")
-            exit()
-    
-
-    goto_room(current_place, party)
+    eh.enter_room(party, current_place)
     while True:
-        options = get_current_stuff(party.room, party, stdscr)
-        interact(options, party.room, [text_win, choice_win, char_win], stdscr)
+        options = eh.base_interaction(party.room, party)
+        interact(options, party.room, [text_win, choice_win, char_win], stdscr, eh)

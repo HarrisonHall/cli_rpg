@@ -48,7 +48,6 @@ class Person(Exist.Exist):
         return (self.hp <= 0)
 
     def interact(self, player, room):
-        print(self.in_party, "party")
         if self.in_party:
             return self.party_interaction(player, room)
         
@@ -250,9 +249,7 @@ class Person(Exist.Exist):
 
     def do_flags(self):
         d = self.interact(self, None)
-        mess = ""
-        for flag in self.flags:
-            mess += flag + '\n'
+        mess = str(self.flags)
         d["message"] = mess
         return d
 

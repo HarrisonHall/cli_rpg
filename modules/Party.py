@@ -1,4 +1,5 @@
 from modules import Person
+from modules import Exist
 
 class Party():
     def __init__(self, debug=False):
@@ -7,6 +8,7 @@ class Party():
             self.add_member(self.debug_player1())
             self.add_member(self.debug_player2())
         self.current_player = self.players[0]
+        self.room = ""
 
     def debug_player1(self):
         player = Person.Person(
@@ -28,11 +30,11 @@ class Party():
                         "Fire Blast": None,
                         "Frost": None,
                         "Lick": None,
-                        "Pout": None,
+                        "Wink": None,
                         "Harrass": None,
                     },
                     "story_point": 0,
-                    "events": {
+                    "flags": {
                         "start": None,
                         "begin": None
                     },
@@ -66,9 +68,10 @@ class Party():
                         "Uppercut": None,
                         "Pout": None,
                         "Lick": None,
+                        "Harrass": None
                     },
                     "story_point": 0,
-                    "events": {
+                    "flags": {
                         "start": None,
                         "begin": None
                     },
@@ -107,7 +110,7 @@ class Party():
         }
 
     def __repr__(self):
-        mess = "PARTY"
+        mess = "Party"
         return mess
 
     def add_member(self, person):
@@ -115,17 +118,26 @@ class Party():
         person.in_party = True
 
     def do_flags(self):
+        d = self.interact()
         message = ""
         for player in self.players:
-            for flag in player.events:
-                message += f"{flag}\n"
-        return message
+            message += str(player) + "\n"
+            message += str(player.flags) + "\n"
+        d["message"] = message
+        return d
+
+    def add_flag(self, flag, value):
+        for member in self.players:
+            member.add_flag(flag, value)
 
     def events(self):
         e = {}
         for player in self.players:
             e.update(player.events)
         return e
+
+    def enter_room(self, new_room):
+        self.room = Exist.Exist.rooms[new_room]
 
     def do_lead(self):
         d = {}
@@ -163,3 +175,19 @@ class Party():
             "vals": []
         }
         return d
+
+    def check_flag(self, flag):
+        for player in self.players:
+            if player.check_flag(flag):
+                return True
+        return False
+
+    def get_inventory(self):
+        inv = {}
+        for member in self.players:
+            for i in member.inventory:
+                if i in inv:
+                    inv[i] += member.inventory[i].get("count", 1)
+                else:
+                    inv[i] = member.inventory[i].get("count", 1)
+        return inv
