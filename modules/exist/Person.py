@@ -77,6 +77,11 @@ class Person(Exist.Exist):
                 "fun": self.sell_inventory,
                 "vals": [player, room]
             }
+        if self.personality.is_theivable(player):
+            d["Steal"] = {
+                "fun": None,
+                "vals": []
+            }
         if not self.is_dead():
             d["Attack"] = {
                 "fun": self.do_attack,

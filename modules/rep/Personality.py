@@ -85,6 +85,13 @@ class Personality():
             return True
         return False
 
+    def is_theivable(self, person):
+        if self.get_rapport(person) > 3:
+            return True
+        if self.openness() + self.extraversion() > self.conscientiousness() + self.neuroticism() + self.agreeableness():
+            return True
+        return False
+
     def will_sell(self, person):
         if (
                 self.extraversion() + self.get_rapport(person)
