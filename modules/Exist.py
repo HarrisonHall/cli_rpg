@@ -1,4 +1,4 @@
-from modules.tools import LogLog
+from modules.tools import Logger
 from modules.rep import Personality
 from modules.rep import Inventory
 from modules import FlagHandler
@@ -70,7 +70,7 @@ class Exist:
     @classmethod
     def start_log(cls):
         cls.LOGGING = True
-        cls.logger = LogLog.LogLog()
+        cls.logger = Logger.Logger()
 
     def log(self, message):
         if self.LOGGING:

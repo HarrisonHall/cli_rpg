@@ -1,6 +1,6 @@
 import datetime
 
-class LogLog:
+class Logger:
     def __init__(self, f="", title=""):
         if f == "":
             self._f = self.get_file_name()

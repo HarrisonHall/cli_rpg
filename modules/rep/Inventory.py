@@ -44,7 +44,6 @@ class Inventory():
         tot = {}
         if player == None:
             for item in self.items:
-                print(item, self.items)
                 tot[item] = self.items[item]["count"]
         else:
             for item in self.items:

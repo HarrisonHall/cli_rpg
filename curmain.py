@@ -22,8 +22,12 @@ class window:
         for line in self.buf:
             self.win.addnstr(start, 1, line, self.w-2)
             start += 1
-        self.win.border()
+        self.border()
         self.win.refresh()
+
+    def border(self):
+        self.win.border()
+        return None
 
     def add_to_buf(self, text, clear=False):
         if clear:
@@ -32,9 +36,11 @@ class window:
         if text.endswith("\n"):
             l.append("ENDED WITH NEWLINE")
         for line in l:
-            self.buf.append(line)
-            if len(self.buf) > self.h - 1:
-                self.buf = self.buf[2:]
+            while len(line) > 0:
+                self.buf.append(line[:self.w-2])
+                line = line[self.w-2:]
+                if len(self.buf) > self.h - 2:
+                    self.buf = self.buf[1:]
 
     def add_choices_to_buf(self, choice_list, clear=True):
         if clear:
@@ -56,6 +62,10 @@ class window:
             else:
                 total = to_add
             self.add_to_buf(total)
+
+    def nodelay(self,flag):
+        self.win.nodelay(flag)
+        return None
 
 def do_exit(stdscr):
     curses.nocbreak()
@@ -108,17 +118,23 @@ def interact(some_dict, room, wins, stdscr, eh):
     
     c = ""
     l = list(some_dict.keys())
-    text_win.add_to_buf("")
+    #text_win.add_to_buf("")
+    choice_win.nodelay(True)
+    choice_win.add_choices_to_buf([f"{i}) {l1}" for i, l1 in enumerate(l)])
+    refresh_wins(wins)
     while not is_valid(c):
-        choice_win.add_choices_to_buf([f"{i}) {l1}" for i, l1 in enumerate(l)])
-        refresh_wins(wins)
-        c = chr(choice_win.win.getch())
+        c = choice_win.win.getch()
+        try:
+            c = chr(c)
+        except:
+            c =""
         if "q" in c:
             curses.nocbreak()
             stdscr.keypad(False)
             curses.echo()
             curses.endwin()
             exit()
+    choice_win.nodelay(False)
     num = l[int(c)]
     choice = some_dict[num]
     text_win.add_to_buf(f"{c}) {num}")

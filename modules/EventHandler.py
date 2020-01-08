@@ -28,10 +28,10 @@ class EventHandler:
     weapons = {}
     events = {}
     
-    def __init__(self, directory="base"):
-        self.read_files(directory)
+    def __init__(self, directory="base", log=False):
+        self.read_files(directory, log=log)
 
-    def read_files(self, directory):
+    def read_files(self, directory, log=False):
         self.objs_from_dirs(Person.Person, self.people,
                             f"{directory}/people")
         self.objs_from_dirs(Room.Room, self.rooms,
@@ -51,8 +51,9 @@ class EventHandler:
             all_things=self.things, all_rooms=self.rooms,
             all_items=self.items, all_weapons=self.weapons
         )
-        Exist.Exist.debug = True
-        Exist.Exist.start_log()
+        if log:
+            Exist.Exist.debug = True
+            Exist.Exist.start_log()
 
     def read_save(self, fname):
         # TODO
