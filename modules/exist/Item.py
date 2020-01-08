@@ -12,6 +12,7 @@ class Item(Exist.Exist):
         self.exists = pdict.get("exists", {
             "start": None
         })
+        self.value = pdict.get("value", 1)
 
     def interact(self, player):
         if self.exit_flag:

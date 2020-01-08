@@ -202,11 +202,18 @@ class Exist:
         r["message"] = "Item(s) added."
         return r
 
+    def sell_item(self, player, room, item, count, cost_per):
+        possible = self.inventory.sell_item(player, room, item, count, cost_per)
+        d = self.interact(player, room)
+        if not possible:
+            d["message"] = "Not enough money."
+        d["message"] = "Sold"
+        return d
+
     def do_inventory(self, player, room):
         d = {}
         inv = self.inventory.get_inventory(player=player)
         for item in inv:
-            item_rep = f"{item} "
             key = "start"
             item_rep = (
                 f"{item} ({self.inventory.get_count(item)})"

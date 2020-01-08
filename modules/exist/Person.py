@@ -36,8 +36,10 @@ class Person(Exist.Exist):
 
         self.in_party = in_party
 
-    def will_sell(self):
-        return self.flags.get("will_sell", False)
+    def will_sell(self, person):
+        if self.check_flag("will_sell") or self.personality.will_sell(person):
+            return True
+        return False
 
     def is_alive(self):
         """True if hp > 0"""
@@ -68,6 +70,11 @@ class Person(Exist.Exist):
         if self.is_dead():
             d["Inventory"] = {
                 "fun": self.do_inventory,
+                "vals": [player, room]
+            }
+        if self.is_alive() and self.will_sell(player) and not self.in_party:
+            d["Purchase"] = {
+                "fun": self.sell_inventory,
                 "vals": [player, room]
             }
         if not self.is_dead():
@@ -217,6 +224,25 @@ class Person(Exist.Exist):
         d = self.interact(self, None)
         mess = str(self.flags)
         d["message"] = mess
+        return d
+
+    def sell_inventory(self, player, room):
+        d = {}
+        inv = self.inventory.get_inventory(player=player)
+        for item in inv:
+            cost = 1
+            if item in self.items:
+                cost = self.items[item].value
+            item_rep = f"{item} ${cost} ({self.inventory.get_count(item)})"
+            d[item_rep] = {
+                "fun": self.sell_item,
+                "vals": [player, room, item, 1, cost]
+            }
+        d["Back"] = {
+            "fun": self.interact,
+            "vals": [player, room]
+        }
+        d["message"] = "Check my wares!"
         return d
 
     def __repr__(self):

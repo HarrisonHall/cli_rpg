@@ -84,3 +84,11 @@ class Personality():
         if self.extraversion() + self.neuroticism() > self.openness() + self.conscientiousness() + self.agreeableness():
             return True
         return False
+
+    def will_sell(self, person):
+        if (
+                self.extraversion() + self.get_rapport(person)
+                > self.neuroticism()
+        ):
+            return True
+        return False

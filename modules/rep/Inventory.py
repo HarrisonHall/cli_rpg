@@ -18,6 +18,8 @@ class Inventory():
     def sell_item(self, person, room, item, count, cost_per):
         if count * cost_per > person.inventory.money:
             return False
+        player.inventory.money -= count*cost_per
+        self.inventory.money += count*cost_per
         person.give_item(item, count)
         self.remove_item(item, count)
         return True
