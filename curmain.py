@@ -159,8 +159,10 @@ if __name__ == "__main__":
     w1 = 60
     h2 = 25
     w2 = 30
-    h3 = 10
+    h3 = 9
     w3 = 90
+    h4 = 1
+    w4 = 90
 
     """
     text_win = window(h1,w1, 0, 0)
@@ -170,6 +172,7 @@ if __name__ == "__main__":
     text_win = window(h1,w1, 15, 0)
     char_win = window(h2, w2, 0, w1)
     choice_win = window(h3, w3, h2, 0)
+    buffer_win = window(h4, w4, h2 + h3, 0)
     text_win.add_to_buf("CURSES RPG DEMO\nBY HARRISON HALL")
 
     eh.enter_room(party, current_place)

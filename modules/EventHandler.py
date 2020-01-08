@@ -4,13 +4,13 @@ from os.path import isdir
 
 from modules import Exist
 from modules import Party
-from modules import Person
-from modules import Thing
-from modules import Room
-from modules import Attack
-from modules import Item
-from modules import Weapon
-from modules import Event
+from modules.exist import Person
+from modules.exist import Thing
+from modules.exist import Room
+from modules.exist import Attack
+from modules.exist import Item
+from modules.exist import Weapon
+from modules.rep import Event
 
 class EventHandler:
     """

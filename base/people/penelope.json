@@ -45,9 +45,11 @@
         },
         "description": "A manly gal.\nSmells like duckgrapes.",
         "inventory": {
-            "Penelope's Key": {
-                "count": 1,
-                "exists": "start"
+            "items": {
+                "Penelope's Key": {
+                    "count": 1,
+                    "exists": "start"
+                }
             }
         }
         

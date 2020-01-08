@@ -36,9 +36,11 @@
         },
         "description": "A kingly dog. One for the ages.",
         "inventory": {
-            "Bird poop": {
-                "count": 1,
-                "exists": "start"
+            "items": {
+                "Bird poop": {
+                    "count": 1,
+                    "exists": "start"
+                }
             }
         }
     }

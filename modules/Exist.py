@@ -1,5 +1,6 @@
-from modules import LogLog
-from modules import Personality
+from modules.tools import LogLog
+from modules.rep import Personality
+from modules.rep import Inventory
 from modules import FlagHandler
 
 class Exist:
@@ -22,12 +23,13 @@ class Exist:
                 self.name = key
             pdict = pdict[self.name]
         
-        self.inventory = pdict.get("inventory", {})
+        self.inventory = Inventory.Inventory(self, pdict=pdict.get("inventory", {}))
 
         # mood, selling, other stuff
         self.flags = FlagHandler.FlagHandler(
             pdict.get("flags", {})
         )
+        self.flags.add_flag(self.name, None)
         self.effects = {}
 
         self.dialogue = pdict.get("dialogue", {})
@@ -38,7 +40,10 @@ class Exist:
 
         if in_party:
             self.class_specific(pdict, in_party=True)
-        self.class_specific(pdict)
+            self.in_party = True
+        else:
+            self.in_party = False
+            self.class_specific(pdict)
 
     def __repr__(self):
         return self.name
@@ -183,47 +188,64 @@ class Exist:
     def give_item(self, player, room, item, count):
         """Give item to a player."""
         self.personality.add_rapport(player, 1)
+        inv = self.inventory.get_inventory(player=player)
         if item == "all":
-            tot = {}
-            tot.update(self.inventory)
-            for item in self.inventory:
-                key = self.inventory[item].get("exists", "start")
-                if self.thing_exists_yet(player, key):
-                    player.add_item(
-                        item,
-                        self.inventory[item].get("count", 1)
-                    )
-                    tot.pop(item)
-            self.inventory = tot
+            for item in inv:
+                self.inventory.give_item(
+                    player, room, item, inv[item]
+                )
         else:
-            player.add_item(item, count)
-            new_count = self.inventory[item].get("count", 1) - count
-            self.inventory[item]["count"] = new_count
-            if self.inventory[item]["count"] <= 0:
-                self.inventory.pop(item)
+            self.inventory.give_item(
+                player, room, item, inv[item]
+            )
         r = self.do_inventory(player, room)
         r["message"] = "Item(s) added."
         return r
 
-    def add_item(self, item, count):
-        if item in self.items:
-            for event in self.items[item].events:
-                self.events[event] = self.items[item].events[event]
-        if item in self.inventory:
-            self.inventory[item]["count"] = (
-                self.inventory[item].get("count", 1) + count
+    def do_inventory(self, player, room):
+        d = {}
+        inv = self.inventory.get_inventory(player=player)
+        for item in inv:
+            item_rep = f"{item} "
+            key = "start"
+            item_rep = (
+                f"{item} ({self.inventory.get_count(item)})"
             )
-        else:
-            self.inventory[item] = {
-                "count": count,
-            }
+            if self.in_party:
+                if item in self.items:
+                    d[item_rep] = {
+                        "fun": self.items[item].interact,
+                        "vals": [self]
+                    }
+                else:
+                    d[item_rep] = {
+                        "fun": None,
+                        "vals": []
+                    }
+            else:
+                d[item_rep] = {
+                    "fun": self.give_item,
+                    "vals": [player, room, item, 1]
+                }
+        if not self.in_party:
+            if len(self.inventory.get_inventory(player)) > 1:
+                d["Take all"] = {
+                    "fun": self.give_item,
+                    "vals": [player, room, "all", -1]
+                }
+        d["Back"] = {
+            "fun": self.interact,
+            "vals": [player, room]
+        }
+        return d
+
+
+    def add_item(self, item, count):
+        self.inventory.add_item(item, count)
         return None
 
     def remove_item(self, item, count):
-        if item in self.inventory:
-            self.inventory[item] -= count
-            if self.inventory[item] <= 0:
-                self.inventory.pop(item)
+        self.inventory.remove_item(item, count)
         return None
 
     def class_specific(self, pdict):

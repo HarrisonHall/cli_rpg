@@ -38,9 +38,11 @@
             "Swing": 1
         },
         "inventory": {
-            "Photograph": {
-                "count": 1,
-                "exists": "start"
+            "items": {
+                "Photograph": {
+                    "count": 1,
+                    "exists": "start"
+                }
             }
         }
     }

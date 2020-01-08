@@ -9,6 +9,9 @@ class Item(Exist.Exist):
         self.exit_flag = pdict.get("exit", False)
 
         self.events = pdict.get("events", {})
+        self.exists = pdict.get("exists", {
+            "start": None
+        })
 
     def interact(self, player):
         if self.exit_flag:

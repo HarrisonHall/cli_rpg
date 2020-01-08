@@ -213,40 +213,6 @@ class Person(Exist.Exist):
         self.effects = tot_effects
         return mess
 
-    def do_inventory(self, player, room):
-        d = {}
-        for item in self.inventory:
-            key = self.inventory[item].get("exists", "start")
-            if self.thing_exists_yet(player, key):
-                item_rep = f"{item} ({self.inventory[item].get('count',1)})"
-                if self.in_party:
-                    if item in self.items:
-                        d[item_rep] = {
-                            "fun": self.items[item].interact,
-                            "vals": [self]
-                        }
-                    else:
-                        d[item_rep] = {
-                            "fun": None,
-                            "vals": []
-                        }
-                else:
-                    d[item_rep] = {
-                        "fun": self.give_item,
-                        "vals": [player, room, item, 1]
-                    }
-        if not self.in_party:
-            if len(self.inventory) > 1:
-                d["Take all"] = {
-                    "fun": self.give_item,
-                    "vals": [player, room, "all", -1]
-                }
-        d["Back"] = {
-            "fun": self.interact,
-            "vals": [player, room]
-        }
-        return d
-
     def do_flags(self):
         d = self.interact(self, None)
         mess = str(self.flags)

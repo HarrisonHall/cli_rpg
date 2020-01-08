@@ -24,6 +24,7 @@ class Thing(Exist.Exist):
             }
         }
 
+    """
     def do_inventory(self, player, room):
         d = {}
         for item in self.inventory:
@@ -44,3 +45,4 @@ class Thing(Exist.Exist):
             "vals": [player, room]
         }
         return d
+    """

@@ -1,5 +1,5 @@
-from modules import Person
 from modules import Exist
+from modules.exist import Person
 
 class Party():
     def __init__(self, debug=False):
@@ -22,8 +22,10 @@ class Party():
                     "race": "Lentarde",
                     "level": 1,
                     "inventory": {
-                        "Potion": {
-                            "count": 1
+                        "items": {
+                            "Potion": {
+                                "count": 1
+                            }
                         }
                     },
                     "attacks": {
@@ -60,8 +62,10 @@ class Party():
                     "race": "Mutt",
                     "level": 2,
                     "inventory": {
-                        "Elixir": {
-                            "count": 1
+                        "items": {
+                            "Elixir": {
+                                "count": 1
+                            }
                         }
                     },
                     "attacks": {
@@ -185,9 +189,10 @@ class Party():
     def get_inventory(self):
         inv = {}
         for member in self.players:
-            for i in member.inventory:
+            minv = member.inventory.get_inventory()
+            for i in minv:
                 if i in inv:
-                    inv[i] += member.inventory[i].get("count", 1)
+                    inv[i] += minv[i]
                 else:
-                    inv[i] = member.inventory[i].get("count", 1)
+                    inv[i] = minv[i]
         return inv

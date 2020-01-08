@@ -1,4 +1,4 @@
-from modules import Flag
+from modules.rep import Flag
 
 class FlagHandler:
     def __init__(self, flags):
@@ -25,6 +25,9 @@ class FlagHandler:
             f = self._flags.pop(flag)
             del f
         return None
+
+    def similar_flags(self, other_flags):
+        return set(self._flags) & set(other_flags)
 
     def __repr__(self):
         return str(self._flags)
