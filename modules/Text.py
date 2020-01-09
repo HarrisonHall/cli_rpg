@@ -6,6 +6,8 @@ class Text:
         #self.message = colored(message, color)
         self.message = message
         self.color = color
+        self.term = term
+        self.curses = curses
 
     def add_message(self, message, color="", space=" "):
         self.message += space + message
@@ -16,15 +18,15 @@ class Text:
         return self
 
     def __str__(self):
-        if term:
+        if self.term:
             return self.message
-        if curses:
+        if self.curses:
             return self.message
         return self.message
 
     def __repr__(self):
-        if term:
-            return self.message:
-        if curses:
+        if self.term:
+            return self.message
+        if self.curses:
             return self.message
         return self.message
