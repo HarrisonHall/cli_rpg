@@ -1,0 +1,13 @@
+{
+    "Cool Lamp" : {
+        "description": "A heated lamp.",
+        "dialogue": {
+            "start": {
+                "say": "Nothing.",
+                "flags": {
+                    "end": null
+                }
+            }
+        }
+    }
+}

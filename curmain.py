@@ -1,6 +1,7 @@
 from modules import Party
 from modules import EventHandler
 from modules import Exist
+from modules import Text
 from sys import argv, exit
 import curses
 
@@ -30,6 +31,8 @@ class window:
         return None
 
     def add_to_buf(self, text, clear=False):
+        if isinstance(text, Text.Text):
+            self.add_to_buf("Added Text Obj")
         if clear:
             self.buf = []
         l = text.split("\n")

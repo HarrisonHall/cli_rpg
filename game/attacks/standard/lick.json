@@ -1,0 +1,12 @@
+{
+    "Lick": {
+        "magic" : 0,
+        "type": "Standard",
+        "damage" : 0.1,
+        "level_multiplier" : 1,
+        "effects": {
+            "in_battle": 0.1,
+            "creep": 0.9
+        }
+    }
+}

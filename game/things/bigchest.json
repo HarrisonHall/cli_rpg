@@ -1,0 +1,21 @@
+{
+    "Big Chest" : {
+        "description": "A ginormous chest.",
+        "inventory": {
+            "items": {
+                "Potion": {
+                    "exist": "start",
+                    "count": 5
+                },
+                "Elixir": {
+                    "exist": "start",
+                    "count": 5
+                },
+                "Sword": {
+                    "exist": "start",
+                    "count": 1
+                }
+            }
+        }
+    }
+}

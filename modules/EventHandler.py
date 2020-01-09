@@ -28,7 +28,7 @@ class EventHandler:
     weapons = {}
     events = {}
     
-    def __init__(self, directory="base", log=False):
+    def __init__(self, directory="demo", log=False):
         self.read_files(directory, log=log)
 
     def read_files(self, directory, log=False):

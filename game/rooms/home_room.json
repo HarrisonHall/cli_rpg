@@ -1,0 +1,26 @@
+{
+    "Your bedroom": {
+        "description": "Your childhood bedroom.",
+        "people": {
+        },
+        "new_rooms": {
+            "Your living room" : {
+                "exists": "begin"
+            },
+            "Your Kitchen": {
+                "exists":"begin"
+            }
+        },
+        "things": {
+            "chest": {
+                "exists": "begin"
+            },
+            "dog": {
+                "exists": "end"
+            },
+            "Cat": {
+                "exists": "begin"
+            }
+        }
+    }
+}

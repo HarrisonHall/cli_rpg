@@ -1,0 +1,29 @@
+{
+    "Cat" : {
+        "description": "A black cat.\nHex symbol on collar.",
+        "dialogue": {
+            "start": {
+                "say": "Meow.",
+                "flags": {
+                    "end": null
+                }
+            }
+        },
+        "inventory": {
+            "items": {
+                "Potion": {
+                    "exists": "start",
+                    "count": 3
+                },
+                "Elixir": {
+                    "exists": "start",
+                    "count": 1
+                },
+                "Stone": {
+                    "exists": "stone active",
+                    "count": 1
+                }
+            }
+        }
+    }
+}

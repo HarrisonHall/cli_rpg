@@ -1,0 +1,11 @@
+{
+    "Pout": {
+        "magic" : 0,
+        "type": "Standard",
+        "damage" : 0,
+        "level_multiplier" : 0,
+        "effects": {
+            "sadden": 1
+        }
+    }
+}

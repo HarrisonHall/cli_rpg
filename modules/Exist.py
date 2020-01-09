@@ -2,6 +2,7 @@ from modules.tools import Logger
 from modules.rep import Personality
 from modules.rep import Inventory
 from modules import FlagHandler
+from modules import Text
 
 class Exist:
     attacks = {}
@@ -37,6 +38,11 @@ class Exist:
 
         self.story_points = pdict.get("story_point", {"start": None})
         self.personality = Personality.Personality(pdict)
+
+        rep = pdict.get("representation", {})
+        self.color = rep.get("color", "white")
+        self.single = rep.get("single", self.name[0])[0]
+        self.interaction_image = rep.get("interact", [])
 
         if in_party:
             self.class_specific(pdict, in_party=True)
@@ -116,22 +122,29 @@ class Exist:
         """
         Dialogue handling.
         """
+        mess = Text.Text("")
         if self.is_dead():
             return {
-                "message": f"{self.name} is dead."
+                "message": mess.add_message(
+                    f"{self.name} is dead."
+                )
             }
         if key not in self.dialogue:
             l = self.interact(player, room)
-            l["message"] = "INVALID KEY"
+            l["message"] = mess.add_message("INVALID KEY")
             return l
         d = self.dialogue[key]
         if message == None:
             update = {
-                "message": f"{self.name}: {d['say']}"
+                "message": mess.add_message(
+                    f"{self.name}: {d['say']}"
+                )
             }
         else:
             update = {
-                "message": f"{message}\n{self.name}: {d['say']}"
+                "message": mess.add_message(
+                    f"{message}\n{self.name}: {d['say']}"
+                )
             }
         if "event" in d:
             player.add_flag(d["event"], None)
@@ -182,7 +195,7 @@ class Exist:
     def do_description(self, player, room):
         """Add message of description to interaction."""
         d = self.interact(player, room)
-        d["message"] = self.description
+        d["message"] = Text.Text(self.description)
         return d
 
     def give_item(self, player, room, item, count):
@@ -199,15 +212,15 @@ class Exist:
                 player, room, item, inv[item]
             )
         r = self.do_inventory(player, room)
-        r["message"] = "Item(s) added."
+        r["message"] = Text.Text("Item(s) added.")
         return r
 
     def sell_item(self, player, room, item, count, cost_per):
         possible = self.inventory.sell_item(player, room, item, count, cost_per)
         d = self.interact(player, room)
         if not possible:
-            d["message"] = "Not enough money."
-        d["message"] = "Sold"
+            d["message"] = Text.Text("Not enough money.")
+        d["message"] = Text.Text("Sold")
         return d
 
     def do_inventory(self, player, room):

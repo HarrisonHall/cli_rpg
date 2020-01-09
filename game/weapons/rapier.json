@@ -1,0 +1,11 @@
+{
+    "Standard Rapier": {
+        "magic" : 0,
+        "energy": 1,
+        "attacks": {
+            "Slash": null
+        },
+        "damage" : 2,
+        "level_multiplier" : 0.1
+    }
+}

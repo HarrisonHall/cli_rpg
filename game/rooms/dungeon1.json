@@ -1,0 +1,33 @@
+{
+    "Dungeon 1": {
+        "description": "A moldy dungeon. The first.",
+        "people": {
+            "Penelope Sinep" : {
+                "dialogue": "start",
+                "exists": "begin"
+            }
+        },
+        "new_rooms": {
+            "Dog House" : {
+                "exists":"given key"
+            },
+            "Hallway": {
+                "exists":"begin"
+            }
+        },
+        "things": {
+            "chest": {
+                "exists": "begin"
+            },
+            "dog": {
+                "exists": "end"
+            },
+            "Cat": {
+                "exists": "begin"
+            },
+            "Big Chest": {
+                "exists": "begin"
+            }
+        }
+    }
+}
