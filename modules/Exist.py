@@ -213,6 +213,11 @@ class Exist:
     def do_inventory(self, player, room):
         d = {}
         inv = self.inventory.get_inventory(player=player)
+        if self.in_party:
+            d[f"Money ${self.inventory.money}"] = {
+                "fun": self.do_inventory,
+                "vals": [player, room]
+            }
         for item in inv:
             key = "start"
             item_rep = (

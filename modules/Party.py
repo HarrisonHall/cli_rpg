@@ -26,7 +26,8 @@ class Party():
                             "Potion": {
                                 "count": 1
                             }
-                        }
+                        },
+                        "money": 5 
                     },
                     "attacks": {
                         "Fire Blast": None,

@@ -3,7 +3,8 @@
 `python3 setup.py build` will create the console executable for the text based game. 
 
 ## TODO
-### UNIT TESTING
+Money buy not work
+SOld message bad
 ### People
 * [x] Rapport and personality flags
 * [x] Person Attack Back
