@@ -1,0 +1,8 @@
+{
+    "Swing": {
+        "magic" : 0,
+        "type": "Physical",
+        "damage" : 1,
+        "level_multiplier" : 0.5
+    }
+}

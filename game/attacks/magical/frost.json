@@ -1,0 +1,11 @@
+{
+    "Frost": {
+        "magic" : 3,
+        "type": "Magical",
+        "damage" : 3,
+        "level_multiplier" : 0.1,
+        "effects" : {
+            "freeze" : 0.1
+        }
+    }
+}

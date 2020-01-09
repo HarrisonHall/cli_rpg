@@ -1,0 +1,11 @@
+{
+    "Stone": {
+        "exit": true,
+        "events": {
+            "has stone": null
+        },
+        "exists": {
+            "stone active": null
+        }
+    }
+}

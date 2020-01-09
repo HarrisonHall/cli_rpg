@@ -1,0 +1,9 @@
+{
+    "Hand": {
+        "magic" : 0,
+        "energy": 0,
+        "attacks": {
+            "Swing": null
+        }
+    }
+}

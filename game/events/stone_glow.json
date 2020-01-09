@@ -1,0 +1,19 @@
+{
+    "Gotten Stone": {
+        "requirements": {
+            "inventory": {
+                "Stone": 1
+            }
+        },
+        "occurance": {
+            "goto_room": "Dog House",
+            "completed_flags": {
+                "stone tp": null
+            },
+            "dialogue": [
+                "A bright light emerges from the stone.",
+                "You find yourself in the dog house again."
+            ]
+        }
+    }
+}

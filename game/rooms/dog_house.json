@@ -1,0 +1,21 @@
+{
+    "Dog House": {
+        "description": "A small dog house.\nWhy did you go inside?",
+        "people": {
+            "Prince Fluff": {
+                "dialogue": "start",
+                "exists": "begin"
+            }
+        },
+        "new_rooms": {
+            "Dungeon 1" : {
+                "exists": "begin"
+            },
+            "Hallway": {
+                "exists":"begin"
+            }
+        },
+        "things": {
+        }
+    }
+}

@@ -1,0 +1,12 @@
+{
+    "Verbally Harrass": {
+        "magic" : 0,
+        "type": "Psychological",
+        "damage" : 0,
+        "level_multiplier" : 0,
+        "effects": {
+            "in_battle": 0.3,
+            "test": 0
+        }
+    }
+}

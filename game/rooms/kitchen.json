@@ -1,0 +1,20 @@
+{
+    "Your kitchen": {
+        "description": "Your family's kitchen.",
+        "people": {
+        },
+        "new_rooms": {
+            "Your childhood bedroom": {
+                "exists":"begin"
+            },
+            "Your living room": {
+                "exists":"begin"
+            }
+        },
+        "things": {
+            "Big Chest": {
+                "exists": "begin"
+            }
+        }
+    }
+}

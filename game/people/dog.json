@@ -1,0 +1,47 @@
+{
+    "Prince Fluff" : {
+        "dialogue": {
+            "custom":{
+                "say": "That's not customary.\nEither way you have completed the game.\nJust use the stone from inventory.",
+                "flags":{
+                    "end": null
+                }
+            },
+            "has stone": {
+                "say": "Ruff.",
+                "choices": {
+                    "Bark back.": "custom",
+                    "Bow down.": "custom"
+                }
+            },
+            "start": {
+                "say": "I will speak once you have acquired the stone.",
+                "flags": {
+                    "end": null
+                },
+                "events": {
+                    "stone active": null
+                }
+            }
+        },
+        "magic": 500,
+        "hp": 1,
+        "flags": {
+            "love": true
+        },
+        "custom": {
+            "lick": {
+                "event": ""
+            }
+        },
+        "description": "A kingly dog. One for the ages.",
+        "inventory": {
+            "items": {
+                "Bird poop": {
+                    "count": 1,
+                    "exists": "start"
+                }
+            }
+        }
+    }
+}
