@@ -44,6 +44,7 @@ def interact(some_dict, room, eh):
             print("Not valid.")
     choice = some_dict[l[int(c)]]
     if choice["fun"] is not None:
+        print(choice)
         interact(choice["fun"](*choice["vals"]), room, eh)
     return None
 

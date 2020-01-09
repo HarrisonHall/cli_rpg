@@ -51,6 +51,11 @@
             "agreeableness": 5,
             "conscientiousness": 2,
             "openness": 10
+        },
+        "representation": {
+            "single": "J",
+            "interact": [],
+            "color": "blue"
         }
     }
 }

@@ -1,4 +1,5 @@
 from modules import Exist
+from modules import Text
 from random import choices
 
 class Person(Exist.Exist):
@@ -253,4 +254,4 @@ class Person(Exist.Exist):
     def __repr__(self):
         if self.is_dead():
             return f"X {self.name}"
-        return self.name
+        return str(Text.Text(self.name,color=self.color))
