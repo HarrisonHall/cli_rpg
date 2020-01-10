@@ -6,6 +6,9 @@ class Inventory():
         self.money = pdict.get("money", 0)
         self.person = person
 
+    def get_item(self, item):
+        return self.items[item]
+
     def give_item(self, person, room, item, count):
         person.inventory.add_item(item, count)
         if item in Exist.Exist.items:
@@ -18,10 +21,9 @@ class Inventory():
     def sell_item(self, person, room, item, count, cost_per):
         if count * cost_per > person.inventory.money:
             return False
-        player.inventory.money -= count*cost_per
-        self.inventory.money += count*cost_per
-        person.give_item(item, count)
-        self.remove_item(item, count)
+        person.inventory.money -= count*cost_per
+        self.money += count*cost_per
+        self.give_item(person, room, item, count)
         return True
 
     def add_item(self, item, count):
@@ -61,6 +63,6 @@ class Inventory():
 
     def __repr__(self):
         mess = ""
-        for item in items:
+        for item in self.items:
             mess += item + ","
         return mess

@@ -205,11 +205,13 @@ class Exist:
         if item == "all":
             for item in inv:
                 self.inventory.give_item(
-                    player, room, item, inv[item]
+                    player, room, item,
+                    count
                 )
         else:
             self.inventory.give_item(
-                player, room, item, inv[item]
+                player, room, item,
+                count
             )
         r = self.do_inventory(player, room)
         r["message"] = Text.Text("Item(s) added.")

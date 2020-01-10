@@ -2,12 +2,13 @@ from termcolor import colored
 import curses as cs
 
 class Text:
-    def __init__(self, message, color="white", term=False, curses=False):
+    curses = False
+    term = False
+    
+    def __init__(self, message, color="white"):
         #self.message = colored(message, color)
         self.message = message
         self.color = color
-        self.term = term
-        self.curses = curses
 
     def add_message(self, message, color="", space=" "):
         self.message += space + message
@@ -16,6 +17,13 @@ class Text:
             color = self.color
         self.message += space + colored(self.message, color)
         return self
+
+    @classmethod
+    def use_term_color(self):
+        self.term = True
+
+    def use_curses_color(self):
+        self.curses = True
 
     def __str__(self):
         if self.term:
