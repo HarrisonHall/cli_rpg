@@ -80,8 +80,8 @@ class Person(Exist.Exist):
             }
         if self.personality.is_theivable(player):
             d["Steal"] = {
-                "fun": None,
-                "vals": []
+                "fun": self.steal_inventory,
+                "vals": [player, room]
             }
         if not self.is_dead():
             d["Attack"] = {
@@ -249,6 +249,25 @@ class Person(Exist.Exist):
             "vals": [player, room]
         }
         d["message"] = "Check my wares!"
+        return d
+
+    def steal_inventory(self, player, room):
+        d = {}
+        inv = self.inventory.get_inventory(player=player)
+        for item in inv:
+            cost = 1
+            if item in self.items:
+                cost = self.items[item].value
+            item_rep = f"{item} ${cost} ({self.inventory.get_count(item)})"
+            d[item_rep] = {
+                "fun": self.give_item,
+                "vals": [player, room, item, 1]
+            }
+        d["Back"] = {
+            "fun": self.interact,
+            "vals": [player, room]
+        }
+        d["message"] = "Shhh!"
         return d
 
     def __repr__(self):

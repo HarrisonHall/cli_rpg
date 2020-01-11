@@ -33,6 +33,7 @@ class window:
     def add_to_buf(self, text, clear=False):
         if isinstance(text, Text.Text):
             self.add_to_buf("Added Text Obj")
+            text = text.message
         if clear:
             self.buf = []
         l = text.split("\n")
@@ -103,6 +104,7 @@ def interact(some_dict, room, wins, stdscr, eh):
     text_win = wins[0]
     choice_win = wins[1]
     char_win = wins[2]
+    buffer_win = wins[3]
 
     if "message" in some_dict:
         text_win.add_to_buf(some_dict["message"])
@@ -166,14 +168,6 @@ if __name__ == "__main__":
     curses.cbreak()
     stdscr.keypad(True)
 
-    """
-    h1 = int(curses.LINES*3/4)
-    w1 = int(curses.COLS*3/4)
-    h2 = h1
-    w2 = curses.COLS - w1
-    h3 = curses.LINES - h1
-    w3 = curses.COLS
-    """
     h1 = 10
     w1 = 60
     h2 = 25
@@ -183,11 +177,6 @@ if __name__ == "__main__":
     h4 = 1
     w4 = 90
 
-    """
-    text_win = window(h1,w1, 0, 0)
-    char_win = window(h2, w2, 0, w1)
-    choice_win = window(h3, w3, h1, 0)
-    """
     text_win = window(h1,w1, 15, 0)
     char_win = window(h2, w2, 0, w1)
     choice_win = window(h3, w3, h2, 0)
@@ -197,4 +186,4 @@ if __name__ == "__main__":
     eh.enter_room(party, current_place)
     while True:
         options = eh.base_interaction(party.room, party)
-        interact(options, party.room, [text_win, choice_win, char_win], stdscr, eh)
+        interact(options, party.room, [text_win, choice_win, char_win, buffer_win], stdscr, eh)
