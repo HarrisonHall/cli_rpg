@@ -29,6 +29,11 @@
             "Cat": {
                 "exists": "begin"
             }
+        },
+        "background": {
+            "orderness": 70,
+            "brightness": 90,
+            "noisiness": 40
         }
     }
 }

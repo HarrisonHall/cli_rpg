@@ -105,6 +105,9 @@ def interact(some_dict, room, wins, stdscr, eh):
     choice_win = wins[1]
     char_win = wins[2]
     buffer_win = wins[3]
+    bg_win = wins[4]
+
+    bg_win.add_to_buf(party.room.get_background())
 
     if "message" in some_dict:
         text_win.add_to_buf(some_dict["message"])
@@ -157,6 +160,7 @@ print("CLI RPG DEMO BY HARRISON HALL")
 eh = EventHandler.EventHandler()
 Exist.Exist.debug = True
 #Exist.Exist.start_log()
+Text.Text.use_curses_color()
 print("DONE LOADING\n---")
 
 
@@ -166,6 +170,7 @@ if __name__ == "__main__":
     curses.resizeterm(35,90)
     curses.noecho()
     curses.cbreak()
+    curses.start_color()
     stdscr.keypad(True)
 
     h1 = 10
@@ -176,14 +181,17 @@ if __name__ == "__main__":
     w3 = 90
     h4 = 1
     w4 = 90
+    h5 = 15
+    w5 = 60
 
+    bg_win = window(h5, w5, 0, 0)
     text_win = window(h1,w1, 15, 0)
     char_win = window(h2, w2, 0, w1)
-    choice_win = window(h3, w3, h2, 0)
-    buffer_win = window(h4, w4, h2 + h3, 0)
+    choice_win = window(h3, w3, h2+h4, 0)
+    buffer_win = window(h4, w4, h2, 0)
     text_win.add_to_buf("CURSES RPG DEMO\nBY HARRISON HALL")
 
     eh.enter_room(party, current_place)
     while True:
         options = eh.base_interaction(party.room, party)
-        interact(options, party.room, [text_win, choice_win, char_win, buffer_win], stdscr, eh)
+        interact(options, party.room, [text_win, choice_win, char_win, bg_win, buffer_win], stdscr, eh)

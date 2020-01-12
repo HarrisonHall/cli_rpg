@@ -8,19 +8,19 @@ SOld message bad
 ### People
 * [x] Rapport and personality flags
 * [x] Person Attack Back
-* [ ] Person skill tree
+* [ ] Person skill tree/leveling
 * [x] Custscene dialogue support
 ### Party
 * [x] Make party
 * [x] Make player inherit from person
 ### Rooms
 * [x] Changing Rooms
-* [ ] Time of day
+* [?] Time of day
 ### Inventory
 * [x] Items
 * [x] Weapons
 * [x] Actual inventory class
-* [ ] Selling
+* [x] Selling
 ### Story
 * [x] ~~Timed enforcement of game elements~~ Event_Handler
 ### Game

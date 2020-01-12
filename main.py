@@ -1,6 +1,7 @@
 from modules import Party
 from modules import EventHandler
 from modules import Exist
+from modules import Text
 from sys import argv, exit
 
 
@@ -56,6 +57,7 @@ print("CLI RPG DEMO BY HARRISON HALL")
 eh = EventHandler.EventHandler()
 Exist.Exist.debug = True
 Exist.Exist.start_log()
+Text.Text.use_term_color()
 print("DONE LOADING\n---")
 
 
