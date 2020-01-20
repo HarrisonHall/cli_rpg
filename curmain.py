@@ -7,8 +7,7 @@ import curses
 
 from implib.WindowHandler import WindowHandler
 from implib.Pane import Pane
-from implib.Interaction import do_exit, interact, get_choices
-from implib.Interaction import get_option, make_colors
+from implib.Interaction import make_colors, interact
 
 
 if __name__ == "__main__":

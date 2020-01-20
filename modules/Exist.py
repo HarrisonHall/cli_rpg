@@ -135,10 +135,9 @@ class Exist:
         """
         mess = Text.Text("")
         if self.is_dead():
+            mess.add_message(f"{self.name} is dead.")
             return {
-                "message": mess.add_message(
-                    f"{self.name} is dead."
-                )
+                "message": mess
             }
         if key not in self.dialogue:
             l = self.interact(player, room)

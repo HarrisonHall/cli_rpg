@@ -14,8 +14,16 @@ def do_exit(stdscr):
     exit()
 
 
-def interact(some_dict, room, wh, stdscr, eh, party):
-    def is_valid(character):
+def interact(
+        some_dict : dict,
+        room : "?",
+        wh : "WindowHandler",
+        stdscr,
+        eh : "EventHandler",
+        party : Party.Party
+) -> None:
+    """Should be looped to make a playable game."""
+    def is_valid(character :str) -> bool:
         if character.isdigit():
             if int(character) in range(len(some_dict.keys())):
                 return True
@@ -96,9 +104,17 @@ def interact(some_dict, room, wh, stdscr, eh, party):
     return None
 
 
-def get_choices(d, a : int, b : int, chars, eh, print_c=True):
+def get_choices(
+        d : dict,
+        a : int,
+        b : int,
+        chars : list,
+        eh : "EventHandler",
+        print_c=True
+) -> Text.Text:
     m = Text.Text("")
     choices = list(d.keys())
+    Exist.Exist.class_log(f"{d.keys()}, a{a}, b{b}")
     for i in range(len(choices)):
         if i == a:
             m.add_message("w↑: ",space="")
@@ -107,16 +123,22 @@ def get_choices(d, a : int, b : int, chars, eh, print_c=True):
         else:
             m.add_message(" "*4,space="")
         if i >= a and i <= b:
-            if len(chars) == 1 + abs(b-a):
-                m.add_message(f"{chars[i-a]}) ")
+            #if len(chars) == 1 + abs(b-a):
+            m.add_message(f"{chars[i-a]}) ")
             m = m + eh.as_text(str(choices[i]))
-            if i < len(choices) - 1:
-                m.add_message("\n",space="")
+        if i < len(choices) - 1 and i != b:
+            m.add_message("\n",space="")
     Exist.Exist.class_log(str(m.message))
     return m
 
 
-def get_option(d, a, b, char, chars):
+def get_option(
+        d : dict,
+        a : int,
+        b : int,
+        char : str,
+        chars : list
+) -> str:
     choices = list(d.keys())
     xlist = []
     for i in range(len(choices)):
@@ -130,10 +152,12 @@ def get_option(d, a, b, char, chars):
     return "-1"
 
 
-def make_colors():
+def make_colors() -> bool:
     print(curses.can_change_color())
     if curses.can_change_color():
         curses.init_color(1, 98, 114, 164)
         curses.init_color(2, 139, 233, 253)
         curses.init_color(3, 80, 250, 123)
         curses.init_color(4, 255, 184, 108)
+        return True
+    return False

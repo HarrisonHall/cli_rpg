@@ -12,16 +12,16 @@ class Text:
         self.message = []
         self.add_message(message, space="")
 
-    def add_message(self, message, color="", space=" "):
+    def add_message(self, message, color="", space=" ") -> "Text":
         if message == "":
-            return
+            return self
         if self.term:
             if color == "":
                 color = self.color
             if space != "":
                 self.message.append([space])
             self.message.append([colored(message, color)])
-            return None
+            return self
         if self.curses:
             if color == "":
                 color = self.color
@@ -29,11 +29,11 @@ class Text:
                 self.message.append([space])
             for char in message:
                 self.message.append([char, self.ccolor(color)])
-            return None
+            return self
         if space != "":
             self.message.append([space])
         self.message.append([message])
-        return None
+        return self
 
     def add_listolists(self, listolists):
         if self.term or self.curses:
