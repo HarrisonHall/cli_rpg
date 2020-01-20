@@ -78,6 +78,11 @@ class Exist:
         cls.LOGGING = True
         cls.logger = Logger.Logger()
 
+    @classmethod
+    def class_log(cls, message):
+        if cls.LOGGING:
+            cls.logger.log(message)
+
     def log(self, message):
         if self.LOGGING:
             self.logger.log(message)

@@ -65,6 +65,8 @@ class EventHandler:
             if isdir(cur_name):
                 self.objs_from_dirs(the_class, obj_dict, cur_name)
                 continue
+            if not cur_name.endswith(".json"):
+                return
             f = open(cur_name, "r")
             new_obj = the_class(pdict=load(f))
             obj_dict.update({

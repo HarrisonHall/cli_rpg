@@ -128,10 +128,7 @@ class Person(Exist.Exist):
 
     def status_message(self):
         return (
-            f"NAME: {self.name}\n"
-            f"RACE: {self.race}\n"
-            f"ARM: {self.armor}\n"
-            f"DESC: {self.description}"
+            f"{self.name.split(' ')[0]} {self.hp}♡ {self.armor}♘ {self.magic}✦"
         )
 
     def get_attacks(self, person, room):

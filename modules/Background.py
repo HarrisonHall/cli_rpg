@@ -9,7 +9,7 @@ class Background:
     ]
     chars = ["&","$","#","%","\\","/",":","-","."]
     def __init__(
-            self, width=60, height=15, seed=0,
+            self, width=58, height=12, seed=0,
             orderness=50, brightness=50, noisiness=20,
             f = ""
     ):

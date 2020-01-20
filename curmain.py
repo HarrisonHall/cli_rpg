@@ -8,64 +8,182 @@ import curses
 global text_buf
 global choice_buf
 
-class window:
-    def __init__(self, h, w, y, x):
+class WindowHandler:
+    def __init__(self, stdscr):
+        self.stdscr = stdscr
+        self.term_height, self.term_width = stdscr.getmaxyx()
+        
+        self.first_win = Pane(10, self.term_width-20, 0, 0)
+        self.battle_win = Pane(1, self.term_width-20, self.first_win.h, 0, draw_border=False)
+        self.text_win = Pane(
+            self.term_height-15,self.term_width-20,
+            self.first_win.h + self.battle_win.h,
+            0
+        )
+        self.buffer_win = Pane(
+            1, self.term_width-20,
+            self.first_win.h+self.battle_win.h+self.text_win.h,
+            0,
+            draw_border=False
+        )
+        self.choice_win = Pane(
+            2, self.term_width,
+            self.first_win.h + self.battle_win.h + self.text_win.h + self.buffer_win.h,
+            0,
+            draw_border=False
+        )
+        self.announcement_win = Pane(
+            1, self.term_width,
+            self.first_win.h + self.battle_win.h + self.text_win.h + self.buffer_win.h + self.choice_win.h,
+            0,
+        )
+        self.map_win = Pane(11, 20, 0, self.term_width - 20, draw_border=False)
+        self.status_win = Pane(self.term_height-15, 20, self.map_win.h, self.term_width - 20)
+
+    def refresh(self):
+        for window in [
+                self.first_win,
+                self.battle_win,
+                self.text_win,
+                self.buffer_win,
+                self.choice_win,
+                self.announcement_win,
+                self.map_win,
+                self.status_win
+        ]:
+            window.refresh()
+
+    def __del__(self):
+        return
+        curses.nocbreak()
+        self.stdscr.keypad(False)
+        curses.echo()
+        curses.endwin()
+
+class Pane:
+    def __init__(
+            self, h : int, w : int, y : int, x : int,
+            draw_border=True
+    ):
+        self.draw_border = draw_border
         self.h = h
         self.w = w
         self.y = y
         self.x = x
         self.win = curses.newwin(h,w,y,x)
-        self.buf = []
+        self.clear()
 
-    def print_list(self):
-        start = 1
+    def clear(self):
+        self.buf = [
+            [
+                [" "] for i in range(self.w)
+            ] for j in range(self.h)
+        ]
+
+    def refresh(self):
         self.win.clear()
-        for line in self.buf:
-            self.win.addnstr(start, 1, line, self.w-2)
-            start += 1
+        for i, row in enumerate(self.buf):
+            for j, item in enumerate(row):
+                #print(f"{self.w} {self.h} {i} {j} '{item[0]}'| ", end="")
+                #print(i, j, item[0], 1)
+                #print(*[curses.color_pair(t) for t in item[1:]])
+                atts = [curses.color_pair(t) for t in item[1:]]
+                if len(atts) > 0:
+                    try:
+                        self.win.addnstr(
+                            i, j, item[0], 1, *atts
+                        )
+                    except Exception:
+                        pass
+                else:
+                    try:
+                        self.win.addnstr(
+                            i, j, item[0], 1
+                        )
+                    except Exception:
+                        pass
         self.border()
         self.win.refresh()
 
-    def border(self):
-        self.win.border()
+    def border(self) -> None:
+        if not self.draw_border:
+            return None
+        for i, row in enumerate(self.buf):
+            for j, item in enumerate(row):
+                #print(f"|{self.buf[i][j]}|", end="")
+                if i in [0, self.h -1]:
+                    self.addnstr(i, j, "█")
+                    #self.buf[i][j][0] = "█"
+                if j in [0, self.w -1]:
+                    self.addnstr(i, j, "█")
+                    #self.buf[i][j][0] = "█"
+                if i in [0, self.h-1] and j in [0, self.w-1]:
+                    self.addnstr(i, j, "█")
+                    #self.buf[i][j][0] = "█"
         return None
 
-    def add_to_buf(self, text, clear=False):
-        if isinstance(text, Text.Text):
-            self.add_to_buf("Added Text Obj")
-            text = text.message
-        if clear:
-            self.buf = []
-        l = text.split("\n")
-        if text.endswith("\n"):
-            l.append("ENDED WITH NEWLINE")
-        for line in l:
-            while len(line) > 0:
-                self.buf.append(line[:self.w-2])
-                line = line[self.w-2:]
-                if len(self.buf) > self.h - 2:
-                    self.buf = self.buf[1:]
+    def addnstr(self, i, j, char, length=1):
+        try:
+            self.win.addnstr(i, j, char, length)
+        except Exception as e:
+            pass
+        return None
 
-    def add_choices_to_buf(self, choice_list, clear=True):
+    def add(self, text, clear=False):
         if clear:
-            self.buf = []
-        i = 0
-        while i < len(choice_list):
-            total = ""
-            to_add = choice_list[i]
-            i += 1
-            if i in range(len(choice_list)):
-                to_add2 = choice_list[i]
-                i += 1
-                if len(to_add) > self.w // 2:
-                    if len(to_add2) > self.w // 2:
-                        total = to_add[:self.w] + to_add2[:self.w]
-                    total = to_add[:self.w] + to_add2
-                spaceing = " "*(self.w//2 - len(to_add))
-                total = to_add + spaceing + to_add2
+            self.clear()
+        if isinstance(text, str):
+            self.add_str(text)
+        if isinstance(text, Text.Text):
+            self.add_textobj(text)
+        if self.draw_border:
+            self.add_row()
+        return None
+
+    def add_str(self, text : str) -> None:
+        #self.add_row()
+        i = 1 if self.draw_border else 0
+        while text != "":
+            if text[0] == "\n":
+                self.add_row()
+                i = 1 if self.draw_border else 0
+                text = text[1:]
+                continue
+            elif i >= self.w - (1 if self.draw_border else 0):
+                self.add_row()
+                i = 1 if self.draw_border else 0
+                continue
             else:
-                total = to_add
-            self.add_to_buf(total)
+                #print(f"|{len(self.buf)} {i}|",end="")
+                self.buf[-1][i] = [text[0]]
+            text = text[1:]
+            i += 1
+        return None
+
+    def add_textobj(self, text : Text.Text) -> None:
+        self.add_row()
+        i = 1
+        for character_list in text:
+            char = character_list[0]
+            attrs = character_list[1:]
+            if char == "\n":
+                self.add_row()
+                continue
+            elif i >= self.w - 1:
+                self.add_row()
+                i = 1
+                self.buf[-1][i] = character_list
+            else:
+                self.buf[-1][i] = character_list
+            i += 1
+        return None
+
+    def add_row(self) -> None:
+        self.buf = self.buf[1:] + [[[" "] for w in range(self.w)]]
+        return None
+
+    def add_choices(self, text):
+        return None
 
     def nodelay(self,flag):
         self.win.nodelay(flag)
@@ -79,16 +197,12 @@ def do_exit(stdscr):
     exit()
 
 
-def interact(some_dict, room, wins, stdscr, eh):
+def interact(some_dict, room, wh, stdscr, eh):
     def is_valid(character):
         if character.isdigit():
             if int(character) in range(len(some_dict.keys())):
                 return True
         return False
-
-    def refresh_wins(ws):
-        for win in wins:
-            win.print_list()
     
     if not isinstance(some_dict, dict):
         if isinstance(some_dict, str):
@@ -100,23 +214,18 @@ def interact(some_dict, room, wins, stdscr, eh):
             #print(some_dict)
             return None
 
-    refresh_wins(wins)
-    text_win = wins[0]
-    choice_win = wins[1]
-    char_win = wins[2]
-    buffer_win = wins[3]
-    bg_win = wins[4]
+    wh.map_win.add("X"*20*20)
 
-    bg_win.add_to_buf(party.room.get_background())
+    wh.refresh()
 
     if "message" in some_dict:
-        text_win.add_to_buf(some_dict["message"])
+        wh.text_win.add(some_dict["message"])
         some_dict.pop("message")
 
-    char_win.add_to_buf("STATUS", clear=True)
+    wh.status_win.add("STATUS", clear=True)
     for player in party.players:
-        char_win.add_to_buf(player.status_message(), clear=False)
-        char_win.add_to_buf(" ")
+        wh.status_win.add(player.status_message(), clear=False)
+        wh.status_win.add(" ")
 
     if "quit" in some_dict:
         do_exit(stdscr)
@@ -126,31 +235,85 @@ def interact(some_dict, room, wins, stdscr, eh):
     
     c = ""
     l = list(some_dict.keys())
-    #text_win.add_to_buf("")
-    choice_win.nodelay(True)
-    choice_win.add_choices_to_buf([f"{i}) {l1}" for i, l1 in enumerate(l)])
-    refresh_wins(wins)
+    wh.choice_win.nodelay(True)
+    i = 0
+    j = 1
+    chars = ["e", "d"]
+    r = True
     while not is_valid(c):
-        c = choice_win.win.getch()
+        if r:
+            wh.choice_win.add(get_choices(some_dict, i, j, chars), clear=True)
+            wh.refresh()
+            r = False
+        c = wh.choice_win.win.getch()
         try:
             c = chr(c)
         except:
             c =""
+        if "w" in c.lower():
+            r = True
+            if i > 0:
+                i -= 1
+                j -= 1
+        if "s" in c.lower():
+            r = True
+            if j < len(l)-1:
+                Exist.Exist.class_log("DID")
+                i += 1
+                j += 1
         if "q" in c:
             curses.nocbreak()
             stdscr.keypad(False)
             curses.echo()
             curses.endwin()
             exit()
-    choice_win.nodelay(False)
+        c = get_option(some_dict, i, j, c, chars)
+    wh.choice_win.nodelay(False)
     num = l[int(c)]
     choice = some_dict[num]
-    text_win.add_to_buf(f"{c}) {num}")
+    wh.text_win.add(f"{c}) {num}")
     if choice["fun"] is not None:
         interact(
-            choice["fun"](*choice["vals"]), room, wins, stdscr, eh
+            choice["fun"](*choice["vals"]), room, wh, stdscr, eh
         )
     return None
+
+def get_choices(d, a : int, b : int, chars, print_c=True):
+    m = ""
+    #print(d)
+    choices = list(d.keys())
+    Exist.Exist.class_log(f"{choices} {a} {b}")
+    for i in range(len(choices)):
+        if i == a: m += "w↑: "
+        if i == b: m += "s↓: "
+        if i >= a and i <= b:
+            if len(chars) == 1 + abs(b-a):
+                m += f"{chars[i-a]}) "
+            m += f"{choices[i]}\n"
+    return m[:-1]
+
+def get_option(d, a, b, char, chars):
+    Exist.Exist.class_log(char)
+    choices = list(d.keys())
+    xlist = []
+    for i in range(len(choices)):
+        if i >= a and i <= b:
+            xlist.append(chars[i-a])
+        else:
+            xlist.append("69")
+    for i, choice in enumerate(xlist):
+        if choice == char:
+            Exist.Exist.class_log(str(i))
+            return str(i)
+    return "-1"
+    
+def make_colors():
+    print(curses.can_change_color())
+    if curses.can_change_color():
+        curses.init_color(1, 98, 114, 164)
+        curses.init_color(2, 139, 233, 253)
+        curses.init_color(3, 80, 250, 123)
+        curses.init_color(4, 255, 184, 108)
 
 current_place = "Hallway"
 party = Party.Party(debug=True)
@@ -159,7 +322,7 @@ print("CLI RPG DEMO BY HARRISON HALL")
 
 eh = EventHandler.EventHandler()
 Exist.Exist.debug = True
-#Exist.Exist.start_log()
+Exist.Exist.start_log()
 Text.Text.use_curses_color()
 print("DONE LOADING\n---")
 
@@ -167,31 +330,20 @@ print("DONE LOADING\n---")
 
 if __name__ == "__main__":
     stdscr = curses.initscr()
-    curses.resizeterm(35,90)
+    curses.start_color()
+    curses.use_default_colors()
+    for i in range(0, curses.COLORS):
+        curses.init_pair(i + 1, i, -1)
+    make_colors()
+    #curses.resizeterm(35,90)
     curses.noecho()
     curses.cbreak()
-    curses.start_color()
     stdscr.keypad(True)
 
-    h1 = 10
-    w1 = 60
-    h2 = 25
-    w2 = 30
-    h3 = 9
-    w3 = 90
-    h4 = 1
-    w4 = 90
-    h5 = 15
-    w5 = 60
-
-    bg_win = window(h5, w5, 0, 0)
-    text_win = window(h1,w1, 15, 0)
-    char_win = window(h2, w2, 0, w1)
-    choice_win = window(h3, w3, h2+h4, 0)
-    buffer_win = window(h4, w4, h2, 0)
-    text_win.add_to_buf("CURSES RPG DEMO\nBY HARRISON HALL")
+    wh = WindowHandler(stdscr)
+    wh.text_win.add("CURSES RPG DEMO\nBY HARRISON HALL")
 
     eh.enter_room(party, current_place)
     while True:
         options = eh.base_interaction(party.room, party)
-        interact(options, party.room, [text_win, choice_win, char_win, bg_win, buffer_win], stdscr, eh)
+        interact(options, party.room, wh, stdscr, eh)

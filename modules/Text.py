@@ -6,19 +6,30 @@ class Text:
     term = False
     
     def __init__(self, message, color="white"):
-        if self.term:
-            self.message = colored(message, color)
-        else:
-            self.message = message
         self.color = color
+        self.message = []
+        self.add_message(message, space="")
 
     def add_message(self, message, color="", space=" "):
+        if message == "":
+            return
         if self.term:
             if color == "":
                 color = self.color
-            self.message += space + colored(message, color)
+            if space != "":
+                self.message.append([space])
+            self.message.append([colored(message, color)])
             return None
-        self.message += space + message
+        if self.curses:
+            if color == "":
+                color = self.color
+            if space != "":
+                self.message.append([space])
+            self.message.append([message, self.ccolor(color)])
+            return None
+        if space != "":
+            self.message.append([space])
+        self.message.append([message])
         return None
 
     def add_listolists(self, listolists):
@@ -40,16 +51,28 @@ class Text:
     def use_curses_color(self):
         self.curses = True
 
+    def ccolor(self, color):
+        return {
+            "black": cs.COLOR_BLACK,
+            "white": cs.COLOR_WHITE,
+            "blue": cs.COLOR_BLUE,
+            "cyan": cs.COLOR_CYAN,
+            "green": cs.COLOR_GREEN,
+            "red": cs.COLOR_RED,
+            "magenta": cs.COLOR_MAGENTA,
+            "yellow": cs.COLOR_YELLOW,
+        }.get(color.lower(), cs.COLOR_WHITE)
+
     def __str__(self):
-        if self.term:
-            return self.message
-        if self.curses:
-            return self.message
-        return self.message
+        mess = ""
+        for l in self.message:
+            mess += l[0]
+        return mess
 
     def __repr__(self):
-        if self.term:
-            return self.message
         if self.curses:
             return self.message
-        return self.message
+        mess = ""
+        for l in self.message:
+            mess += l[0]
+        return mess
