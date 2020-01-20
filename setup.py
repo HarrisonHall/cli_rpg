@@ -16,7 +16,7 @@ setup(
         }
     },
     executables = [
-        Executable("main.py", base="Console")
+        Executable("curmain.py", base="Console")
     ]
 )
     
