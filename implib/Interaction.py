@@ -118,7 +118,7 @@ def get_choices(
     for i in range(len(choices)):
         if i == a:
             m.add_message("w↑: ",space="")
-        elif i == b:
+        elif i == b or ((i == len(choices) - 1) and i < b):
             m.add_message("s↓: ",space="")
         else:
             m.add_message(" "*4,space="")
