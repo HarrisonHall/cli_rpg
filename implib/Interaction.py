@@ -14,7 +14,7 @@ def do_exit(stdscr):
     exit()
 
 
-def interact(some_dict, room, wh, stdscr, eh):
+def interact(some_dict, room, wh, stdscr, eh, party):
     def is_valid(character):
         if character.isdigit():
             if int(character) in range(len(some_dict.keys())):
@@ -91,7 +91,7 @@ def interact(some_dict, room, wh, stdscr, eh):
     wh.text_win.add(f"⇒ {num}")
     if choice["fun"] is not None:
         interact(
-            choice["fun"](*choice["vals"]), room, wh, stdscr, eh
+            choice["fun"](*choice["vals"]), room, wh, stdscr, eh, party
         )
     return None
 

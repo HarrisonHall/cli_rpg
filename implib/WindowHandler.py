@@ -5,8 +5,7 @@ from modules import Text
 from sys import argv, exit
 import curses
 
-global text_buf
-global choice_buf
+from .Pane import Pane
 
 class WindowHandler:
     def __init__(self, stdscr):
