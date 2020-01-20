@@ -44,6 +44,9 @@ class Exist:
         self.single = rep.get("single", self.name[0])[0]
         self.interaction_image = rep.get("interact", [])
 
+        self.xpos = pdict.get("xpos", -1000)
+        self.ypos = pdict.get("ypos", -1000)
+
         if in_party:
             self.class_specific(pdict, in_party=True)
             self.in_party = True
@@ -53,6 +56,9 @@ class Exist:
 
     def __repr__(self):
         return self.name
+
+    def as_text(self):
+        return Text.Text(self.name, self.color)
 
     @classmethod
     def update_all_dicts(
@@ -200,7 +206,7 @@ class Exist:
     def do_description(self, player, room):
         """Add message of description to interaction."""
         d = self.interact(player, room)
-        d["message"] = Text.Text(self.description)
+        d["message"] = Text.Text(self.description, color=self.color)
         return d
 
     def give_item(self, player, room, item, count):

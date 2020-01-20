@@ -4,6 +4,7 @@ from os.path import isdir
 
 from modules import Exist
 from modules import Party
+from modules import Text
 from modules.exist import Person
 from modules.exist import Thing
 from modules.exist import Room
@@ -11,6 +12,7 @@ from modules.exist import Attack
 from modules.exist import Item
 from modules.exist import Weapon
 from modules.rep import Event
+
 
 class EventHandler:
     """
@@ -126,3 +128,17 @@ class EventHandler:
 
     def enter_room(self, party, new_room):
         party.enter_room(new_room)
+
+    def as_text(self, thing):
+        if thing in self.people:
+            return self.people[thing].as_text()
+        if thing in self.things:
+            return self.things[thing].as_text()
+        if thing in self.rooms:
+            return self.rooms[thing].as_text()
+        return Text.Text(thing)
+
+    def get_mapping(self, h, w):
+        for i in range(h):
+            for j in range(w):
+                pass

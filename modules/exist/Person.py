@@ -127,8 +127,13 @@ class Person(Exist.Exist):
         return d
 
     def status_message(self):
+        # Options ⚛♡♘✦☉🖤💕🧀🧔
+        # 🖳¬█ 
         return (
-            f"{self.name.split(' ')[0]} {self.hp}♡ {self.armor}♘ {self.magic}✦"
+            f"{self.name.split(' ')[0]}\n"
+            f"{self.hp}♡ "
+            f"{self.armor}♘\n{self.magic}✦ "
+            f"{self.energy}☉"
         )
 
     def get_attacks(self, person, room):

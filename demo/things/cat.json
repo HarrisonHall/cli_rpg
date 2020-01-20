@@ -24,6 +24,11 @@
                     "count": 1
                 }
             }
+        },
+        "representation": {
+            "single": "𐇬",
+            "interact": [],
+            "color": "green"
         }
     }
 }

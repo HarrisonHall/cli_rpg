@@ -3,7 +3,8 @@
 `python3 setup.py build` will create the console executable for the text based game. 
 
 ## TODO
-* [ ] Fix x and w
+* [ ] Fix s and w
+* [ ] Fix map center
 ### People
 * [x] Rapport and personality flags
 * [x] Person Attack Back

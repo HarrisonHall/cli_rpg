@@ -1,11 +1,13 @@
 from termcolor import colored
 import curses as cs
 
+from modules import Exist
+
 class Text:
     curses = False
     term = False
     
-    def __init__(self, message, color="white"):
+    def __init__(self, message, color="blue"):
         self.color = color
         self.message = []
         self.add_message(message, space="")
@@ -25,7 +27,8 @@ class Text:
                 color = self.color
             if space != "":
                 self.message.append([space])
-            self.message.append([message, self.ccolor(color)])
+            for char in message:
+                self.message.append([char, self.ccolor(color)])
             return None
         if space != "":
             self.message.append([space])
@@ -70,12 +73,20 @@ class Text:
         return mess
 
     def __repr__(self):
-        if self.curses:
-            return self.message
         mess = ""
         for l in self.message:
             mess += l[0]
         return mess
 
+    def __len__(self):
+        return len(self.message)
+
     def __getitem__(self, position):
         return self.message[position]
+
+    def __add__(self, other):
+        new = Text("")
+        Exist.Exist.class_log(f"{type(other)}")
+        new.message = self.message + other.message
+        new.color = self.color
+        return new
