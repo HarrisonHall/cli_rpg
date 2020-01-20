@@ -44,9 +44,6 @@ class Exist:
         self.single = rep.get("single", self.name[0])[0]
         self.interaction_image = rep.get("interact", [])
 
-        self.xpos = pdict.get("xpos", -1000)
-        self.ypos = pdict.get("ypos", -1000)
-
         if in_party:
             self.class_specific(pdict, in_party=True)
             self.in_party = True

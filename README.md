@@ -5,6 +5,8 @@
 ## TODO
 * [x] Fix s and w
 * [x] Fix map center
+* [ ] Buffer commands
+* [ ] Remove q as quit
 ### People
 * [x] Rapport and personality flags
 * [x] Person Attack Back

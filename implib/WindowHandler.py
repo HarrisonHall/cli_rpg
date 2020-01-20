@@ -35,6 +35,7 @@ class WindowHandler:
             1, self.term_width,
             self.first_win.h + self.battle_win.h + self.text_win.h + self.buffer_win.h + self.choice_win.h,
             0,
+            is_buf=True
         )
         self.map_win = Pane(11, 19, 0, self.term_width - 19, draw_border=False)
         self.status_win = Pane(self.term_height-19, 19, self.map_win.h, self.term_width - 19)

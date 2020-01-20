@@ -51,6 +51,11 @@
                     "exists": "start"
                 }
             }
+        },
+        "representation": {
+            "single": "P",
+            "interact": [],
+            "color": "yellow"
         }
         
     }

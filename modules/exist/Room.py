@@ -17,15 +17,52 @@ class Room(Exist.Exist):
         )
 
         self.layout = {}
+        self.layout_d = pdict.get("layout", {})
 
-    def make_layout(self):
-        for t, d in zip([self.new_rooms],[Exist.Exist.rooms]):
-            for O in t:
-                if O in d:
+    def make_layout(self) -> dict:
+        for thing in self.layout_d:
+            if "square" in thing:
+                p1 = self.layout_d[thing][0]
+                p2 = self.layout_d[thing][1]
+                for i in range(p1[1], p2[1]+1):
+                    for j in range(p1[0], p2[0]+1):
+                        if (
+                                (i == p1[1] or i == p2[1]) or
+                                (j == p1[0] or j == p2[0])
+                        ):
+                            self.layout[(i,j)] = Text.Text(
+                                "█", color="black"
+                            )
+                            Exist.Exist.class_log("TEST")
+            elif "wall" in thing:
+                for pos in self.layout_d[thing]:
                     self.layout[
-                        (d[O].xpos, d[O].ypos)
-                    ] = Text.Text(d[O].single, color=d[O].color)
-        return None
+                        (pos[1],pos[0])
+                    ] = Text.Text("█", color="black")
+            else:
+                for pos in self.layout_d[thing]:
+                    self.layout[
+                        (pos[1], pos[0])
+                    ] = self.get_character(thing)
+        return self.layout
+
+    def get_character(self, thing):
+        if thing in self.new_rooms:
+            if thing in self.rooms:
+                r = self.rooms[thing]
+                return Text.Text(r.single, color=r.color)
+            return Text.Text("⊓", color="magenta")
+        if thing in self.new_people:
+            if thing in self.people:
+                p = self.people[thing]
+                return Text.Text(p.single, color=p.color)
+            return Text.Text("☺", color="black")
+        if thing in self.new_things:
+            if thing in self.things:
+                t = self.things[thing]
+                return Text.Text(t.single, color=t.color)
+            return Text.Text("&", color="yellow")
+        return Text.Text("?", color="cyan")
 
     def enter(self):
         """return Text for entering room."""
@@ -35,7 +72,7 @@ class Room(Exist.Exist):
         return self.background.get_background()
 
     def get_mapping(self, h, w, cx, cy):
-        self.make_layout
+        self.make_layout()
         m = Text.Text("")
         for i in range(cy-h//2,cy+h//2+1):
             for j in range(cx-w//2,cx+w//2+1):
@@ -45,7 +82,7 @@ class Room(Exist.Exist):
                     if (i, j) in self.layout:
                         m = m + self.layout.get((i,j))
                     else:
-                        m.add_message("·", space="")
+                        m.add_message("·", color=self.color, space="")
         Exist.Exist.class_log(str(m.message))
         return m
 

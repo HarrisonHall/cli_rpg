@@ -23,9 +23,6 @@
             "chest": {
                 "exists": "begin"
             },
-            "dog": {
-                "exists": "end"
-            },
             "Cat": {
                 "exists": "begin"
             }
@@ -34,6 +31,21 @@
             "orderness": 70,
             "brightness": 90,
             "noisiness": 40
+        },
+        "layout":{
+            "square": [[-6, -4],[6,4]],
+            "John Rolloway": [[-2,2]],
+            "Penelope Sinep": [[2,-3]],
+            "Cat": [[-2,-2]],
+            "Kitchen": [[3,-4]],
+            "Dungeon 1": [[4,4]],
+            "wall": [
+                [1, 1],
+                [-3, -5],
+                [-2,-2],
+                [-7,0],
+                [7,3]
+            ]
         }
     }
 }

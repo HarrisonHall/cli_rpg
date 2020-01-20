@@ -41,6 +41,10 @@ def interact(
 
     wh.map_win.add(room.get_mapping(wh.map_win.h, wh.map_win.w, 0, 0))
 
+    ann = "[m]ove [a]ttack [i]nventory [q]uit"
+    w = wh.announcement_win.w - 2
+    wh.announcement_win.add((" "*(w-len(ann)))+ann)
+
     wh.refresh()
 
     if "message" in some_dict:

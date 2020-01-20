@@ -9,9 +9,10 @@ import curses
 class Pane:
     def __init__(
             self, h : int, w : int, y : int, x : int,
-            draw_border=True
+            draw_border=True, is_buf=False
     ):
         self.draw_border = draw_border
+        self.is_buf = is_buf
         self.h = h
         self.w = w
         self.y = y
@@ -33,9 +34,6 @@ class Pane:
         self.win.clear()
         for i, row in enumerate(self.buf):
             for j, item in enumerate(row):
-                #print(f"{self.w} {self.h} {i} {j} '{item[0]}'| ", end="")
-                #print(i, j, item[0], 1)
-                #print(*[curses.color_pair(t) for t in item[1:]])
                 atts = [curses.color_pair(t) for t in item[1:]]
                 if len(atts) > 0:
                     try:
@@ -66,7 +64,8 @@ class Pane:
                 elif i == self.w-1:
                     self.addnstr(0, i, "·")
                 else:
-                    self.addnstr(0, i, " ")
+                    pass
+                    #self.addnstr(0, i, " ")
             return None
         for i, row in enumerate(self.buf):
             for j, item in enumerate(row):
@@ -105,12 +104,27 @@ class Pane:
         """Generic, text can be Text.Text or str"""
         if clear:
             self.clear()
+        if self.is_buf:
+            self.add_buf(text)
+            return None
         if isinstance(text, str):
             self.add_str(text)
         if isinstance(text, Text.Text):
             self.add_textobj(text)
         if self.draw_border:
             self.add_row()
+        return None
+
+    def add_buf(self, text) -> None:
+        if isinstance(text, str):
+            i = 1
+            for char in text:
+                if i >= self.w - 1:
+                    break
+                self.buf[0][i] = [char]
+                i+=1 
+        if isinstance(text, Text.Text):
+            pass
         return None
 
     def add_str(self, text : str) -> None:
