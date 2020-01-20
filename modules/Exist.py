@@ -216,7 +216,7 @@ class Exist:
             for item in inv:
                 self.inventory.give_item(
                     player, room, item,
-                    count
+                    self.inventory.get_count(item)
                 )
         else:
             self.inventory.give_item(
