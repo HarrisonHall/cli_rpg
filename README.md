@@ -3,8 +3,7 @@
 `python3 setup.py build` will create the console executable for the text based game. 
 
 ## TODO
-Money buy not work
-SOld message bad
+* [ ] Fix x and w
 ### People
 * [x] Rapport and personality flags
 * [x] Person Attack Back
@@ -25,3 +24,7 @@ SOld message bad
 * [x] ~~Timed enforcement of game elements~~ Event_Handler
 ### Game
 * [ ] Story Stuff
+### Map
+* [ ] World map
+* [ ] Minimap
+* [ ] Movement Interactions

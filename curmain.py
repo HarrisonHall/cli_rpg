@@ -16,7 +16,7 @@ class WindowHandler:
         self.first_win = Pane(10, self.term_width-20, 0, 0)
         self.battle_win = Pane(1, self.term_width-20, self.first_win.h, 0, draw_border=False)
         self.text_win = Pane(
-            self.term_height-15,self.term_width-20,
+            self.term_height-19,self.term_width-20,
             self.first_win.h + self.battle_win.h,
             0
         )
@@ -27,7 +27,7 @@ class WindowHandler:
             draw_border=False
         )
         self.choice_win = Pane(
-            2, self.term_width,
+            6, self.term_width,
             self.first_win.h + self.battle_win.h + self.text_win.h + self.buffer_win.h,
             0,
             draw_border=False
@@ -38,7 +38,7 @@ class WindowHandler:
             0,
         )
         self.map_win = Pane(11, 20, 0, self.term_width - 20, draw_border=False)
-        self.status_win = Pane(self.term_height-15, 20, self.map_win.h, self.term_width - 20)
+        self.status_win = Pane(self.term_height-19, 20, self.map_win.h, self.term_width - 20)
 
     def refresh(self):
         for window in [
@@ -237,8 +237,8 @@ def interact(some_dict, room, wh, stdscr, eh):
     l = list(some_dict.keys())
     wh.choice_win.nodelay(True)
     i = 0
-    j = 1
-    chars = ["e", "d"]
+    j = 5
+    chars = ["e", "d", "c", "r", "f", "v"]
     r = True
     while not is_valid(c):
         if r:
@@ -284,8 +284,12 @@ def get_choices(d, a : int, b : int, chars, print_c=True):
     choices = list(d.keys())
     Exist.Exist.class_log(f"{choices} {a} {b}")
     for i in range(len(choices)):
-        if i == a: m += "w↑: "
-        if i == b: m += "s↓: "
+        if i == a:
+            m += "w↑: "
+        elif i == b or i == len(choices) - 1:
+            m += "s↓: "
+        else:
+            m += " "*4
         if i >= a and i <= b:
             if len(chars) == 1 + abs(b-a):
                 m += f"{chars[i-a]}) "

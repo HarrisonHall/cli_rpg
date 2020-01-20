@@ -76,3 +76,6 @@ class Text:
         for l in self.message:
             mess += l[0]
         return mess
+
+    def __getitem__(self, position):
+        return self.message[position]
