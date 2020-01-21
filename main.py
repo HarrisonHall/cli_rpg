@@ -1,68 +1,63 @@
-from modules import Party
-from modules import EventHandler
-from modules import Exist
-from modules import Text
-from sys import argv, exit
+"""
+Harrison Hall
+
+Main file for running the game. 
+"""
+
+import argparse as ap
+from sys import exit
+
+from implib import Basic
+from implib import CurHandler
 
 
-def interact(some_dict, room, eh):
-    def is_valid(character):
-        if character.isdigit():
-            if int(character) in range(len(some_dict.keys())):
-                return True
-        return False
+all_games = [
+    "demo",
+    "main"
+]
+
+
+def setup_parser() -> ap.ArgumentParser:
+    global all_games
     
-    if not isinstance(some_dict, dict):
-        if isinstance(some_dict, str):
-            if "end" in some_dict:
-                return None
-        if some_dict is None:
-            return None
-        else:
-            print(some_dict)
-            return None
-
-    if "message" in some_dict:
-        print(some_dict["message"])
-        some_dict.pop("message")
-
-    if "quit" in some_dict:
-        exit()
-
-    if some_dict == {}:
-        return None
-    
-    c = ""
-    l = list(some_dict.keys())
-    print()
-    while not is_valid(c):
-        for i, l1 in enumerate(l):
-            print(f"{i}) {l1}")
-        c = input(">> ")
-        if 'q' in c:
-            exit()
-        if not is_valid(c):
-            print("Not valid.")
-    choice = some_dict[l[int(c)]]
-    if choice["fun"] is not None:
-        interact(choice["fun"](*choice["vals"]), room, eh)
-    return None
-
-
-current_place = "Hallway"
-party = Party.Party(debug=True)
-
-print("CLI RPG DEMO BY HARRISON HALL")
-
-eh = EventHandler.EventHandler()
-Exist.Exist.debug = True
-Exist.Exist.start_log()
-Text.Text.use_term_color()
-print("DONE LOADING\n---")
+    parser = ap.ArgumentParser(
+        description="CLI Game by Harrison Hall"
+    )
+    parser.add_argument(
+        "-B", "-b", "--basic",
+        action="store_true",
+        help="run basic CLI game"
+    )
+    parser.add_argument(
+        "-C", "-c", "--curses",
+        action="store_true",
+        help="run curses game"
+    )
+    parser.add_argument(
+        "-G", "-g", "--game",
+        action="store",
+        default="demo",
+        help=f"select game from {all_games}"
+    )
+    return parser.parse_args()
 
 
 if __name__ == "__main__":
-    eh.enter_room(party, current_place)
-    while True:
-        options = eh.base_interaction(party.room, party)
-        interact(options, party.room, eh)
+    args = setup_parser()
+
+    if args.game not in all_games:
+        exit(f"Invalid game, try from {all_games}")
+
+    if args.basic and not args.curses:
+        Basic.main(*Basic.setup())
+        exit()
+
+    if args.curses and not args.basic:
+        CurHandler.main(*CurHandler.setup())
+        exit()
+
+    if not args.curses and not args.basic:
+        CurHandler.main(*CurHandler.setup())
+        exit()
+
+    exit("Options not valid. Try with -h.")

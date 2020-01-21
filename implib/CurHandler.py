@@ -9,8 +9,7 @@ from implib.WindowHandler import WindowHandler
 from implib.Pane import Pane
 from implib.Interaction import make_colors, interact
 
-
-if __name__ == "__main__":
+def setup():
     current_place = "Hallway"
     party = Party.Party(debug=True)
 
@@ -38,6 +37,12 @@ if __name__ == "__main__":
     wh.text_win.add("CURSES RPG DEMO\nBY HARRISON HALL")
 
     eh.enter_room(party, current_place)
+    return (party, eh, wh, stdscr)
+
+def main(party, eh, wh, stdscr):
     while True:
         options = eh.base_interaction(party.room, party)
         interact(options, party.room, wh, stdscr, eh, party)
+    return None
+
+

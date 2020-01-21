@@ -3,8 +3,6 @@
 `python3 setup.py build` will create the console executable for the text based game. 
 
 ## TODO
-* [x] Fix s and w
-* [x] Fix map center
 * [ ] Buffer commands
 * [ ] Remove q as quit
 ### People
@@ -23,10 +21,11 @@
 * [x] Actual inventory class
 * [x] Selling
 ### Story
-* [x] ~~Timed enforcement of game elements~~ Event_Handler
+* [x] ~~Timed enforcement of game elements~~ Event\_Handler
 ### Game
 * [ ] Story Stuff
 ### Map
 * [ ] World map
 * [ ] Minimap
 * [ ] Movement Interactions
+* [ ] Battle
